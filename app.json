@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/index/index",
+    "pages/list/list",
+    "pages/stats/stats",
+    "pages/profile/profile",
+    "pages/detail/detail",
+    "pages/migrate/migrate",
+    "pages/textedit/textedit"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1A73E8",
+    "navigationBarTitleText": "急诊科预检分诊",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1A73E8",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "患者登记",
+        "iconPath": "images/icon_add.png",
+        "selectedIconPath": "images/icon_add_active.png"
+      },
+      {
+        "pagePath": "pages/list/list",
+        "text": "患者列表",
+        "iconPath": "images/icon_list.png",
+        "selectedIconPath": "images/icon_list_active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "数据统计",
+        "iconPath": "images/icon_stats.png",
+        "selectedIconPath": "images/icon_stats_active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "个人中心",
+        "iconPath": "images/icon_profile.png",
+        "selectedIconPath": "images/icon_profile_active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

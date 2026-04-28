@@ -1,0 +1,410 @@
+/* pages/index/index.wxss - v3 患者登记页面样式 */
+page {
+  background: var(--background);
+}
+
+.container {
+  padding: var(--spacing-2xl);
+  box-sizing: border-box;
+}
+
+/* ==================== 顶部提示条 ==================== */
+.page-banner {
+  background: var(--primary-gradient-deep);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 6rpx 24rpx rgba(13, 71, 161, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-banner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.page-banner-icon {
+  font-size: 40rpx;
+  margin-right: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.page-banner-text {
+  font-size: var(--font-base);
+  font-weight: 600;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.5rpx;
+}
+
+.page-banner-sub {
+  font-size: var(--font-sm);
+  opacity: 0.7;
+  margin-top: 4rpx;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==================== 表单布局辅助 ==================== */
+.flex-row {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.flex-row .form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ==================== 分诊选择器增强 ==================== */
+.triage-selector {
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.triage-option {
+  position: relative;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+/* ==================== OCR按钮增强 ==================== */
+.ocr-section {
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-2xl);
+  border-top: 1rpx solid var(--border-light);
+}
+
+.ocr-btn {
+  position: relative;
+  border: 2rpx solid transparent;
+}
+
+.ocr-btn:active {
+  border-color: var(--primary-lighter);
+}
+
+/* ==================== 抢救区域特殊样式 ==================== */
+.rescue-detail {
+  background: linear-gradient(180deg, #FFF8F0 0%, #FFFFFF 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  border: 1rpx solid var(--border-light);
+}
+
+/* ==================== 住院信息开关 ==================== */
+.switch-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) 0;
+}
+
+.switch-label {
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ==================== 表单子标题 ==================== */
+.section-sub {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+}
+
+.section-sub::before {
+  content: '';
+  width: 6rpx;
+  height: 24rpx;
+  background: var(--primary-gradient);
+  border-radius: 3rpx;
+  margin-right: var(--spacing-md);
+}
+
+/* ==================== 编辑模式标识 ==================== */
+.edit-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 152, 0, 0.12);
+  color: var(--warning);
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  margin-left: var(--spacing-md);
+}
+
+/* ==================== OCR已附加指示 ==================== */
+.ocr-attached {
+  display: flex;
+  align-items: center;
+  background: #F0F7FF;
+  border: 2rpx solid var(--primary-lighter);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.ocr-attached-icon {
+  font-size: 40rpx;
+  margin-right: var(--spacing-md);
+}
+
+.ocr-attached-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ocr-attached-label {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.ocr-attached-doc-type {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  margin-top: 4rpx;
+}
+
+.ocr-attached-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.ocr-attached-btn {
+  padding: 8rpx 20rpx;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--primary);
+  background: #ffffff;
+  border: 1rpx solid var(--primary-lighter);
+  border-radius: var(--radius-md);
+}
+
+.ocr-attached-btn:active {
+  opacity: 0.7;
+}
+
+.ocr-attached-remove {
+  color: var(--danger);
+  border-color: #FFCDD2;
+}
+
+/* ==================== OCR多结果列表 ==================== */
+.ocr-attached-list {
+  margin-top: var(--spacing-md);
+}
+
+.ocr-attached-item {
+  display: flex;
+  align-items: center;
+  background: #F0F7FF;
+  border: 1rpx solid var(--primary-lighter);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.ocr-attached-time {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  margin-left: 8rpx;
+}
+
+/* ==================== 医生/诊断选择器下拉 ==================== */
+.doctor-picker,
+.diagnosis-picker {
+  position: relative;
+}
+
+.doctor-list,
+.diagnosis-list {
+  position: fixed;
+  top: 25%;
+  left: 10%;
+  right: 10%;
+  width: 80%;
+  z-index: 100;
+  background: #ffffff;
+  border: 1rpx solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8rpx 48rpx rgba(0, 0, 0, 0.18);
+  max-height: 65vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.diagnosis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1rpx solid var(--border-light);
+  font-weight: 600;
+  font-size: var(--font-md);
+}
+
+.diagnosis-close {
+  padding: 8rpx 16rpx;
+  color: var(--text-hint);
+  font-size: var(--font-lg);
+}
+
+.diagnosis-search {
+  margin: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1rpx solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  background: var(--background);
+}
+
+.diagnosis-scroll {
+  max-height: 45vh;
+  overflow-y: auto;
+}
+
+.diagnosis-item {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-base);
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.diagnosis-item:active {
+  background: var(--primary-bg);
+}
+
+.diagnosis-empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-hint);
+  font-size: var(--font-sm);
+}
+
+/* ==================== OCR编辑弹窗 ==================== */
+.ocr-edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  box-sizing: border-box;
+}
+
+.ocr-edit-modal {
+  background: #ffffff;
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20rpx 80rpx rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.ocr-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-lg);
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.ocr-edit-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ocr-edit-count {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  background: var(--surface-alt);
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-lg);
+}
+
+.ocr-edit-textarea {
+  margin: var(--spacing-lg) var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  background: var(--surface-alt);
+  min-height: 400rpx;
+  max-height: 50vh;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.ocr-edit-tips {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  text-align: center;
+  padding: 0 var(--spacing-2xl) var(--spacing-sm);
+}
+
+.ocr-edit-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-2xl) var(--spacing-2xl);
+}
+
+.ocr-edit-btn {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 600;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.ocr-edit-reset {
+  background: linear-gradient(135deg, #FF9800, #FFB74D);
+  color: #ffffff;
+}
+
+.ocr-edit-cancel {
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+}
+
+.ocr-edit-save {
+  background: linear-gradient(145deg, #1A73E8, #4A90D9);
+  color: #ffffff;
+}
+
+.ocr-edit-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}

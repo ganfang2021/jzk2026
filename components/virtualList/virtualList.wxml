@@ -1,0 +1,17 @@
+<view class="virtual-list-container" style="height: {{visibleHeight}}rpx;">
+  <scroll-view
+    scroll-y
+    style="height: 100%;"
+    bindscroll="onScroll"
+    scroll-with-animation>
+    <view class="virtual-list-content" style="height: {{totalHeight}}rpx;">
+      <view
+        class="virtual-list-item"
+        wx:for="{{visibleData}}"
+        wx:key="index"
+        style="height: {{itemHeight}}rpx; transform: translateY({{(startIndex + index) * itemHeight}}rpx);">
+        <slot name="item" item="{{item}}" index="{{startIndex + index}}"></slot>
+      </view>
+    </view>
+  </scroll-view>
+</view>

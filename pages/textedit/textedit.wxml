@@ -1,0 +1,92 @@
+<view class="page">
+  <!-- 工具栏第一行：格式化 -->
+  <view class="toolbar">
+    <view class="toolbar-group">
+      <view class="toolbar-btn {{isBold ? 'active' : ''}}" bindtap="toggleBold">B</view>
+      <view class="toolbar-btn {{isItalic ? 'active' : ''}}" bindtap="toggleItalic">I</view>
+      <view class="toolbar-btn {{isUnderline ? 'active' : ''}}" bindtap="toggleUnderline">U</view>
+    </view>
+    <view class="toolbar-divider"></view>
+    <view class="toolbar-group">
+      <view class="toolbar-btn" bindtap="alignLeft">左</view>
+      <view class="toolbar-btn" bindtap="alignCenter">中</view>
+      <view class="toolbar-btn" bindtap="alignRight">右</view>
+    </view>
+    <view class="toolbar-divider"></view>
+    <view class="toolbar-group">
+      <view class="toolbar-btn" bindtap="indentIncrease">缩进</view>
+      <view class="toolbar-btn" bindtap="indentDecrease">伸进</view>
+    </view>
+  </view>
+
+  <!-- 工具栏第二行：段落和操作 -->
+  <view class="toolbar">
+    <view class="toolbar-group">
+      <view class="toolbar-btn" bindtap="formatBullet">•列表</view>
+      <view class="toolbar-btn" bindtap="formatNumber">编号</view>
+    </view>
+    <view class="toolbar-divider"></view>
+    <view class="toolbar-group">
+      <view class="toolbar-btn" bindtap="formatHeader">标题</view>
+      <view class="toolbar-btn" bindtap="insertDivider">分隔线</view>
+    </view>
+    <view class="toolbar-divider"></view>
+    <view class="toolbar-group">
+      <view class="toolbar-btn" bindtap="findText">查找</view>
+      <view class="toolbar-btn ai-btn" bindtap="aiFormat">AI排版</view>
+    </view>
+  </view>
+
+  <!-- 字号和行间距 -->
+  <view class="format-bar">
+    <view class="format-item">
+      <text class="format-label">字号</text>
+      <picker mode="selector" range="{{fontSizeOptions}}" value="{{fontSizeIndex}}" bindchange="onFontSizeChange">
+        <view class="format-value">{{fontSizeOptions[fontSizeIndex]}}</view>
+      </picker>
+    </view>
+    <view class="format-item">
+      <text class="format-label">行距</text>
+      <picker mode="selector" range="{{lineHeightOptions}}" value="{{lineHeightIndex}}" bindchange="onLineHeightChange">
+        <view class="format-value">{{lineHeightOptions[lineHeightIndex]}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 编辑区域 -->
+  <view class="editor-wrap">
+    <textarea
+      class="editor"
+      style="font-size: {{currentFontSize}}px; line-height: {{currentLineHeight}};"
+      value="{{content}}"
+      bindinput="onContentInput"
+      bindblur="onContentBlur"
+      placeholder="请输入或粘贴文本内容..."
+      maxlength="-1"
+    />
+  </view>
+
+  <!-- 查找面板 -->
+  <view class="find-panel" wx:if="{{showFindPanel}}">
+    <view class="find-input-wrap">
+      <input class="find-input" value="{{findText}}" bindinput="onFindInput" placeholder="输入要查找的内容" />
+      <view class="find-btn" bindtap="doFind">查找</view>
+    </view>
+    <view class="find-result" wx:if="{{findResult}}">{{findResult}}</view>
+    <view class="find-close" bindtap="closeFindPanel">关闭</view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-info">
+      <text class="char-count">{{content.length}} 字符</text>
+      <text class="history-info" wx:if="{{canUndo || canRedo}}">↩{{historyIndex + 1}}/{{history.length}}</text>
+    </view>
+    <view class="bottom-btns">
+      <view class="btn {{canUndo ? '' : 'disabled'}}" bindtap="undo">撤销</view>
+      <view class="btn {{canRedo ? '' : 'disabled'}}" bindtap="redo">重做</view>
+      <view class="btn btn-cancel" bindtap="cancelEdit">取消</view>
+      <view class="btn btn-save" bindtap="saveContent">保存</view>
+    </view>
+  </view>
+</view>

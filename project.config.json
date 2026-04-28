@@ -1,0 +1,57 @@
+{
+  "miniprogramRoot": "./",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": false,
+    "enhance": true,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "uploadWithSourceMap": false,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.15.1",
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "cloudfunctions",
+        "type": "folder"
+      },
+      {
+        "value": ".arts",
+        "type": "folder"
+      },
+      {
+        "value": "node_modules",
+        "type": "folder"
+      },
+      {
+        "value": ".md",
+        "type": "suffix"
+      }
+    ],
+    "include": []
+  },
+  "appid": "wxa6069ef42009d2c8",
+  "editorSetting": {},
+  "cloudfunctionConfig": {
+    "env": "cloud1-2gsdkndd66be0552"
+  }
+}

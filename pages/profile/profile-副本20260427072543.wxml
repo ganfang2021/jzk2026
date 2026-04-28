@@ -1,0 +1,124 @@
+<view class="profile-container">
+  <!-- 装饰性背景元素 -->
+  <view class="deco-circle p-deco-1"></view>
+  <view class="deco-circle p-deco-2"></view>
+
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="user-card-bg"></view>
+    <view class="avatar-wrapper">
+      <view class="avatar-ring"></view>
+      <view class="avatar">
+        <text class="avatar-icon">👨‍⚕️</text>
+      </view>
+    </view>
+    <view class="user-info">
+      <view class="user-name">{{currentUser.nickname || currentUser.username || '未登录'}}</view>
+      <view class="user-role">
+        <text class="role-badge">{{currentUser.role === 'doctor' ? '医生' : currentUser.role === 'nurse' ? '护士' : currentUser.role === 'admin' ? '管理员' : '未知'}}</text>
+      </view>
+      <view class="user-id">账号: {{currentUser.username || '--'}}</view>
+    </view>
+  </view>
+
+  <!-- 系统信息 -->
+  <view class="card info-card">
+    <view class="card-title">
+      <text class="title-icon">ℹ️</text>
+      <text>系统信息</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">系统名称</text>
+      <text class="info-value">急诊科预检分诊系统</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">登录时间</text>
+      <text class="info-value">{{currentUser.loginTime || '未知'}}</text>
+    </view>
+  </view>
+
+  <!-- 管理员：数据管理 -->
+  <view class="card action-card" wx:if="{{currentUser.role === 'admin'}}">
+    <view class="card-title">
+      <text class="title-icon">☁️</text>
+      <text>数据管理</text>
+    </view>
+    <view class="action-item" bindtap="onSyncFromCloud">
+      <view class="action-item-icon" style="background:#E8F5E9;">
+        <text style="color:#2E7D32;font-size:28rpx;">⬇️</text>
+      </view>
+      <text class="action-item-text">从云端同步数据</text>
+      <text class="action-item-arrow">›</text>
+    </view>
+    <view class="action-item" bindtap="onSyncToCloud">
+      <view class="action-item-icon" style="background:#E3F2FD;">
+        <text style="color:#1976D2;font-size:28rpx;">⬆️</text>
+      </view>
+      <text class="action-item-text">手动同步到云端</text>
+      <text class="action-item-arrow">›</text>
+    </view>
+    <view class="sync-hint">将云端所有患者数据同步到本地，或强制上传所有数据到云端</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="card action-card">
+    <view class="card-title">
+      <text class="title-icon">⚙️</text>
+      <text>账户管理</text>
+    </view>
+    <view class="action-item" bindtap="onChangePassword">
+      <view class="action-item-icon" style="background:#E8F0FE;">
+        <text style="color:#1A73E8;font-size:28rpx;">🔒</text>
+      </view>
+      <text class="action-item-text">修改密码</text>
+      <text class="action-item-arrow">›</text>
+    </view>
+    <view class="action-item danger" bindtap="onLogout">
+      <view class="action-item-icon" style="background:#FFEBEE;">
+        <text style="color:#C62828;font-size:28rpx;">🚪</text>
+      </view>
+      <text class="action-item-text">退出登录</text>
+      <text class="action-item-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 管理员：用户管理 -->
+  <view class="card action-card" wx:if="{{currentUser.role === 'admin'}}">
+    <view class="card-title">
+      <text class="title-icon">👥</text>
+      <text>用户管理</text>
+    </view>
+
+    <view class="user-mgmt-header">
+      <text class="user-mgmt-hint">共 {{allUsers.length}} 名用户</text>
+      <view class="user-mgmt-add-btn" bindtap="onAddUser">+ 添加用户</view>
+    </view>
+
+    <view wx:for="{{allUsers}}" wx:key="id" class="user-mgmt-item">
+      <view class="user-mgmt-avatar">{{item.role === 'doctor' ? '👨‍⚕️' : item.role === 'nurse' ? '👩‍⚕️' : '👤'}}</view>
+      <view class="user-mgmt-info">
+        <view class="user-mgmt-name">
+          <text>{{item.nickname}}</text>
+          <text class="user-mgmt-role {{item.role}}">{{item.role === 'doctor' ? '医生' : item.role === 'nurse' ? '护士' : item.role === 'admin' ? '管理员' : ''}}</text>
+          <text wx:if="{{item.isPreset}}" class="user-mgmt-badge">预置</text>
+        </view>
+        <view class="user-mgmt-meta">
+          <text>账号: {{item.username}}</text>
+          <text>患者: {{item.patientCount || 0}}人</text>
+        </view>
+      </view>
+      <view class="user-mgmt-actions" wx:if="{{item.role !== 'admin' && item.id !== currentUser.userId}}">
+        <view class="mgmt-btn mgmt-delete" bindtap="onDeleteUser" data-id="{{item.id}}" data-name="{{item.nickname}}">删除</view>
+      </view>
+    </view>
+
+    <view wx:if="{{allUsers.length === 0}}" style="text-align:center;padding:30rpx 0;color:var(--text-hint);font-size:var(--font-md);">
+      暂无其他用户
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text class="version-text">版本 1.0.0</text>
+  </view>
+</view>

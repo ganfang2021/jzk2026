@@ -1,0 +1,290 @@
+// 云存储管理器 - 处理患者数据的云端同步
+const config = require('../config.js');
+
+class CloudStorageManager {
+  constructor() {
+    this.isSyncing = false;
+    this.syncQueue = [];
+    this.db = null;
+    this.collectionName = config.cloud.collection;
+  }
+
+  // 初始化云数据库
+  init() {
+    if (wx.cloud) {
+      this.db = wx.cloud.database();
+      console.log('云存储管理器初始化成功');
+      return true;
+    }
+    console.warn('云开发未初始化');
+    return false;
+  }
+
+  // 生成患者数据的同步哈希（用于判断数据是否变更）
+  _generateSyncHash(patient) {
+    var fields = JSON.stringify({
+      name: patient.name,
+      age: patient.age,
+      gender: patient.gender,
+      triageLevel: patient.triageLevel,
+      diagnosis: patient.diagnosis,
+      pulse: patient.pulse,
+      heartRate: patient.heartRate,
+      respRate: patient.respRate,
+      spo2: patient.spo2,
+      bpSystolic: patient.bpSystolic,
+      bpDiastolic: patient.bpDiastolic,
+      doctor: patient.doctor,
+      inTime: patient.inTime,
+      outTime: patient.outTime,
+      hospitalized: patient.hospitalized,
+      dept: patient.dept,
+      rescued: patient.rescued,
+      intubated: patient.intubated,
+      centralLine: patient.centralLine,
+      cpr: patient.cpr,
+      cprSuccess: patient.cprSuccess,
+      death: patient.death,
+      outcome: patient.outcome,
+      surgery: patient.surgery,
+      severeTrauma: patient.severeTrauma,
+      surgeryTime: patient.surgeryTime,
+      ivAccess: patient.ivAccess,
+      outcome: patient.outcome,
+      cpr48hCount: patient.cpr48hCount,
+      ocrResults: patient.ocrResults ? JSON.stringify(patient.ocrResults) : null
+    });
+    // 简单哈希
+    var hash = 0;
+    for (var i = 0; i < fields.length; i++) {
+      var ch = fields.charCodeAt(i);
+      hash = ((hash << 5) - hash) + ch;
+      hash = hash & hash;
+    }
+    return 'h' + Math.abs(hash).toString(36);
+  }
+
+  // 同步单个患者到云端（带哈希去重）
+  async syncPatientToCloud(patient, userId) {
+    if (!this.db) {
+      console.warn('云数据库未初始化');
+      return { success: false, error: '云数据库未初始化' };
+    }
+
+    try {
+      // 计算当前数据的哈希值
+      var currentHash = this._generateSyncHash(patient);
+
+      // 如果本地记录已有相同哈希，说明数据未变更，跳过同步
+      if (patient._syncHash === currentHash) {
+        return { success: true, operation: 'skipped', reason: '数据未变更' };
+      }
+
+      // 检查是否已存在
+      const existResult = await this.db.collection(this.collectionName)
+        .where({
+          _id: patient.id
+        })
+        .count();
+
+      var syncData = {
+        ...patient,
+        _syncHash: currentHash,
+        userId: userId,
+        updatedAt: new Date(),
+        syncedAt: new Date()
+      };
+      // 移除可能污染数据库的内部字段和云端不允许的字段
+      delete syncData._needsCloudSync;
+      delete syncData._localUpdatedAt;
+      delete syncData._id;          // 避免 _id 与顶层 _id 冲突
+      delete syncData._openid;      // 云端系统字段，不能写入
+      delete syncData._unionid;     // 云端系统字段，不能写入
+      delete syncData._createDate;   // 云端自动维护字段
+      delete syncData._updateDate;  // 云端自动维护字段
+
+      if (existResult.total > 0) {
+        // 更新现有记录
+        const result = await this.db.collection(this.collectionName)
+          .doc(patient.id)
+          .update({
+            data: syncData
+          });
+        console.log('更新患者到云端成功:', patient.id);
+        return { success: true, operation: 'update', data: result, hash: currentHash };
+      } else {
+        // 添加新记录
+        var addData = Object.assign({ _id: patient.id }, syncData);
+        const result = await this.db.collection(this.collectionName)
+          .add({
+            data: addData
+          });
+        console.log('添加患者到云端成功:', patient.id);
+        return { success: true, operation: 'add', data: result, hash: currentHash };
+      }
+    } catch (e) {
+      console.error('同步患者到云端失败:', e);
+      return { success: false, error: e.message };
+    }
+  }
+
+  // 从云端加载患者数据
+  async loadPatientsFromCloud(userId, isAdmin = false) {
+    if (!this.db) {
+      console.warn('云数据库未初始化');
+      return [];
+    }
+
+    try {
+      let result;
+      if (isAdmin) {
+        // 管理员加载所有数据
+        result = await this.db.collection(this.collectionName)
+          .where({
+            deleted: this.db.command.neq(true)
+          })
+          .orderBy('createdAt', 'desc')
+          .limit(1000)
+          .get();
+      } else {
+        // 普通用户加载自己的数据
+        result = await this.db.collection(this.collectionName)
+          .where({
+            userId: userId,
+            deleted: this.db.command.neq(true)
+          })
+          .orderBy('createdAt', 'desc')
+          .limit(1000)
+          .get();
+      }
+
+      console.log('从云端加载患者数据:', result.data.length, '条');
+
+      // 云端数据去重：按 _id 保留最新版本
+      var seen = {};
+      var deduped = [];
+      for (var i = 0; i < result.data.length; i++) {
+        var p = result.data[i];
+        var pid = p._id;
+        if (!pid) continue;
+        var pTime = new Date(p.updatedAt || p.createdAt || 0).getTime();
+        if (!seen[pid] || pTime > seen[pid].time) {
+          seen[pid] = { patient: p, time: pTime };
+        }
+      }
+      for (var id in seen) {
+        // 清理云端系统字段
+        var patient = seen[id].patient;
+        delete patient._openid;
+        delete patient._unionid;
+        delete patient._createDate;
+        delete patient._updateDate;
+        deduped.push(patient);
+      }
+      if (deduped.length < result.data.length) {
+        console.log('云端去重完成:', result.data.length, '->', deduped.length);
+      }
+      return deduped;
+    } catch (e) {
+      console.error('从云端加载患者数据失败:', e);
+      return [];
+    }
+  }
+
+  // 从云端删除患者
+  async deletePatientFromCloud(patientId) {
+    if (!this.db) {
+      console.warn('云数据库未初始化');
+      return { success: false };
+    }
+
+    try {
+      // 软删除
+      const result = await this.db.collection(this.collectionName)
+        .doc(patientId)
+        .update({
+          data: {
+            deleted: true,
+            deletedAt: new Date()
+          }
+        });
+      console.log('从云端删除患者成功:', patientId);
+      return { success: true };
+    } catch (e) {
+      console.error('从云端删除患者失败:', e);
+      return { success: false, error: e.message };
+    }
+  }
+
+  // 批量同步患者数据到云端
+  async batchSyncToCloud(patients, userId) {
+    if (!this.db) {
+      console.warn('云数据库未初始化');
+      return { success: false };
+    }
+
+    console.log('开始批量同步，患者数量:', patients.length);
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: []
+    };
+
+    // 分批处理，每批10条
+    const batchSize = 10;
+    for (let i = 0; i < patients.length; i += batchSize) {
+      const batch = patients.slice(i, i + batchSize);
+      
+      const batchResults = await Promise.all(batch.map(patient =>
+        this.syncPatientToCloud(patient, userId).catch(err => ({
+          success: false,
+          error: err.message || 'Unknown error'
+        }))
+      ));
+
+      batchResults.forEach((result, index) => {
+        if (result && result.success) {
+          results.success++;
+          // 更新本地对象的哈希（用于后续去重）
+          if (result.hash && batch[index]) {
+            batch[index]._syncHash = result.hash;
+          }
+        } else {
+          results.failed++;
+          results.errors.push({
+            index: i + index,
+            patientId: batch[index].id,
+            error: result.error || 'Unknown error'
+          });
+        }
+      });
+
+      // 避免请求过快
+      if (i + batchSize < patients.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    console.log('批量同步完成:', results);
+    return results;
+  }
+
+  // 检查云数据库集合是否存在
+  async checkCollection() {
+    if (!this.db) {
+      return false;
+    }
+
+    try {
+      // 尝试查询一条数据
+      await this.db.collection(this.collectionName).limit(1).get();
+      return true;
+    } catch (e) {
+      console.error('云数据库集合不存在或无权限:', e);
+      return false;
+    }
+  }
+}
+
+// 导出单例
+module.exports = new CloudStorageManager();

@@ -1,0 +1,326 @@
+<view class="container">
+  <scroll-view scroll-y style="height:100vh;">
+    <!-- 基本信息 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">📋</text>基本信息</view>
+      
+      <view class="form-group">
+        <label class="form-label required">患者姓名</label>
+        <input class="form-input" value="{{name}}" bindinput="onInput" data-field="name" placeholder="请输入患者姓名" />
+      </view>
+      
+      <view class="flex-row">
+        <view class="form-group">
+          <label class="form-label required">年龄</label>
+          <input class="form-input" type="number" value="{{age}}" bindinput="onInput" data-field="age" placeholder="年龄" />
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label required">性别</label>
+          <picker range="{{genderOptions}}" bindchange="onGenderChange">
+            <view class="picker-value">{{gender || '请选择'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <label class="form-label required">预检分诊分级</label>
+        <view class="triage-selector">
+          <view class="triage-option {{triageLevel === 'Ⅰ' ? 'selected' : ''}}" data-level="Ⅰ" bindtap="onTriageSelect">Ⅰ<text class="level-label">危重</text></view>
+          <view class="triage-option {{triageLevel === 'Ⅱ' ? 'selected' : ''}}" data-level="Ⅱ" bindtap="onTriageSelect">Ⅱ<text class="level-label">急症</text></view>
+          <view class="triage-option {{triageLevel === 'Ⅲ' ? 'selected' : ''}}" data-level="Ⅲ" bindtap="onTriageSelect">Ⅲ<text class="level-label">紧急</text></view>
+          <view class="triage-option {{triageLevel === 'Ⅳ' ? 'selected' : ''}}" data-level="Ⅳ" bindtap="onTriageSelect">Ⅳ<text class="level-label">非紧急</text></view>
+        </view>
+      </view>
+
+      <!-- OCR扫描录入 -->
+      <view class="ocr-section">
+        <view class="ocr-title">OCR扫描录入</view>
+        <view class="ocr-buttons">
+          <view class="ocr-btn" bindtap="onScanOrder">
+            <view class="ocr-icon" style="background:#E3F2FD;">嘱</view>
+            <text class="ocr-text">扫描医嘱</text>
+          </view>
+          <view class="ocr-btn" bindtap="onScanLab">
+            <view class="ocr-icon" style="background:#E8F5E9;">检</view>
+            <text class="ocr-text">检查/检验</text>
+          </view>
+          <view class="ocr-btn" bindtap="onScanRecord">
+            <view class="ocr-icon" style="background:#FFF8E1;">病</view>
+            <text class="ocr-text">门诊病历</text>
+          </view>
+        </view>
+        <view wx:if="{{ocrDataList.length > 0}}" class="ocr-attached-list">
+          <view wx:for="{{ocrDataList}}" wx:for-index="idx" wx:key="scanTime" class="ocr-attached-item">
+            <view class="ocr-attached-icon">📄</view>
+            <view class="ocr-attached-info">
+              <text class="ocr-attached-label">扫描{{idx+1}}：</text>
+              <text class="ocr-attached-doc-type">{{item.docType === 'medicalOrder' ? '医嘱' : item.docType === 'inspection' ? '检验检查' : item.docType === 'outpatientRecord' ? '门诊病历' : '文档'}}</text>
+              <text class="ocr-attached-time"> - {{formatTime(item.scanTime)}}</text>
+            </view>
+            <view class="ocr-attached-actions">
+              <view class="ocr-attached-btn" data-idx="{{idx}}" bindtap="viewOcrItem">查看</view>
+              <view class="ocr-attached-btn" data-idx="{{idx}}" bindtap="editOcrItem">编辑</view>
+              <view class="ocr-attached-btn ocr-attached-remove" data-idx="{{idx}}" bindtap="removeOcrItem">清除</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 生命体征 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">❤️</text>生命体征</view>
+      
+      <view class="flex-row">
+        <view class="form-group">
+          <label class="form-label">脉搏(次/分)</label>
+          <input class="form-input" type="number" value="{{pulse}}" bindinput="onInput" data-field="pulse" placeholder="60-100" />
+        </view>
+        <view class="form-group">
+          <label class="form-label">呼吸(次/分)</label>
+          <input class="form-input" type="number" value="{{respRate}}" bindinput="onInput" data-field="respRate" placeholder="12-20" />
+        </view>
+      </view>
+      
+      <view class="flex-row">
+        <view class="form-group">
+          <label class="form-label">心率(次/分)</label>
+          <input class="form-input" type="number" value="{{heartRate}}" bindinput="onInput" data-field="heartRate" placeholder="60-100" />
+        </view>
+        <view class="form-group">
+          <label class="form-label">血氧饱和度(%)</label>
+          <input class="form-input" type="number" value="{{spo2}}" bindinput="onInput" data-field="spo2" placeholder="95-100" />
+        </view>
+      </view>
+      
+      <view class="flex-row">
+        <view class="form-group">
+          <label class="form-label">收缩压(mmHg)</label>
+          <input class="form-input" type="number" value="{{bpSystolic}}" bindinput="onInput" data-field="bpSystolic" placeholder="90-140" />
+        </view>
+        <view class="form-group">
+          <label class="form-label">舒张压(mmHg)</label>
+          <input class="form-input" type="number" value="{{bpDiastolic}}" bindinput="onInput" data-field="bpDiastolic" placeholder="60-90" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 就诊信息 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">🏥</text>就诊信息</view>
+      
+      <view class="form-group">
+        <label class="form-label required">入急诊科时间</label>
+        <picker mode="multiSelector" bindchange="onInTimeChange" bindcolumnchange="onInTimeColumnChange" value="{{inTimeMultiIndex}}" range="{{inTimeMultiArray}}">
+          <view class="picker-value">{{inTimeStr || '请选择时间'}}</view>
+        </picker>
+      </view>
+      
+      <view class="form-group">
+        <label class="form-label">出急诊科时间</label>
+        <picker mode="multiSelector" bindchange="onOutTimeChange" bindcolumnchange="onOutTimeColumnChange" value="{{outTimeMultiIndex}}" range="{{outTimeMultiArray}}">
+          <view class="picker-value">{{outTimeStr || '未出科'}}</view>
+        </picker>
+      </view>
+       
+      <view class="form-group doctor-picker">
+        <label class="form-label">接诊医生</label>
+        <input class="form-input" value="{{doctor}}" bindinput="onDoctorInput" data-field="doctor" placeholder="输入医生姓名" bindfocus="onDoctorFocus" />
+        <view class="doctor-list" wx:if="{{showDoctorPicker}}">
+          <view class="diagnosis-header">
+            <text>选择医生</text>
+            <text class="diagnosis-close" bindtap="closeDoctorPicker">✕</text>
+          </view>
+          <input class="diagnosis-search" placeholder="输入医生姓名搜索" bindinput="onDoctorSearchInput" value="{{searchDoctor}}" />
+          <scroll-view scroll-y class="diagnosis-scroll">
+            <view wx:for="{{filteredDoctors}}" wx:key="index" class="diagnosis-item" data-name="{{item}}" bindtap="onDoctorSelect">{{item}}</view>
+            <view wx:if="{{filteredDoctors.length === 0 && searchDoctor}}" class="diagnosis-empty">无匹配医生</view>
+          </scroll-view>
+        </view>
+      </view>
+      
+      <view class="form-group diagnosis-picker">
+        <label class="form-label">诊断</label>
+        <input class="form-input" value="{{diagnosis}}" bindinput="onInput" data-field="diagnosis" placeholder="点击输入诊断" bindfocus="onDiagnosisFocus" />
+        <view class="diagnosis-list" wx:if="{{showDiagnosisPicker}}">
+          <view class="diagnosis-header">
+            <text>选择诊断</text>
+            <text class="diagnosis-close" bindtap="closeDiagnosisPicker">✕</text>
+          </view>
+          <input class="diagnosis-search" placeholder="输入首字母或名称搜索" bindinput="onDiagnosisInput" value="{{searchDiagnosis}}" />
+          <scroll-view scroll-y class="diagnosis-scroll">
+            <view wx:for="{{filteredDiagnoses}}" wx:key="index" class="diagnosis-item" data-name="{{item.name}}" bindtap="onDiagnosisSelect">{{item.name}}</view>
+            <view wx:if="{{filteredDiagnoses.length === 0 && searchDiagnosis}}" class="diagnosis-empty">无匹配诊断</view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 住院信息 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">🏨</text>住院信息</view>
+      
+      <view class="switch-group">
+        <text class="switch-label">是否住院</text>
+        <switch checked="{{hospitalized}}" bindchange="onSwitchChange" data-field="hospitalized" color="#1976D2" />
+      </view>
+      
+      <view class="form-group" wx:if="{{hospitalized}}">
+        <label class="form-label">住院科室</label>
+        <picker range="{{deptOptions}}" bindchange="onDeptChange">
+          <view class="picker-value">{{dept || '请选择科室'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 抢救信息 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">🚨</text>抢救信息</view>
+      
+      <!-- 常规显示：是否抢救 -->
+      <view class="switch-group-main">
+        <view class="switch-main-icon" style="background:#FFEBEE;">
+          <text style="color:#D32F2F;font-weight:bold;">急</text>
+        </view>
+        <view class="switch-main-content">
+          <text class="switch-main-label">是否抢救</text>
+          <text class="switch-main-desc">开启后显示更多抢救选项</text>
+        </view>
+        <switch checked="{{rescued}}" bindchange="onSwitchChange" data-field="rescued" color="#FF9800" />
+      </view>
+      
+      <!-- 常规显示：静脉通道 -->
+      <view class="switch-group-main">
+        <view class="switch-main-icon" style="background:#E8F5E9;">
+          <text style="color:#4CAF50;font-weight:bold;">静</text>
+        </view>
+        <view class="switch-main-content">
+          <text class="switch-main-label">建立静脉通道</text>
+          <text class="switch-main-desc">常规操作</text>
+        </view>
+        <switch checked="{{ivAccess}}" bindchange="onSwitchChange" data-field="ivAccess" color="#4CAF50" />
+      </view>
+      
+      <!-- 选择抢救后才显示的选项 -->
+      <view wx:if="{{rescued}}" class="rescue-detail">
+        <view class="section-subtitle">抢救措施</view>
+        <view class="switch-grid">
+          <view class="switch-item">
+            <view class="switch-icon" style="background:#E3F2FD;">
+              <text style="color:#1976D2;font-weight:bold;">插</text>
+            </view>
+            <view class="switch-content">
+              <text class="switch-text">气管插管</text>
+              <switch checked="{{intubated}}" bindchange="onSwitchChange" data-field="intubated" color="#2196F3" />
+            </view>
+          </view>
+          <view class="switch-item">
+            <view class="switch-icon" style="background:#F3E5F5;">
+              <text style="color:#9C27B0;font-weight:bold;">中</text>
+            </view>
+            <view class="switch-content">
+              <text class="switch-text">中心静脉</text>
+              <switch checked="{{centralLine}}" bindchange="onSwitchChange" data-field="centralLine" color="#9C27B0" />
+            </view>
+          </view>
+        </view>
+        
+        <view class="section-subtitle">心肺复苏</view>
+        <view class="switch-grid">
+          <view class="switch-item">
+            <view class="switch-icon" style="background:#FFF3E0;">
+              <text style="color:#FF9800;font-weight:bold;">心</text>
+            </view>
+            <view class="switch-content">
+              <text class="switch-text">心肺复苏</text>
+              <switch checked="{{cpr}}" bindchange="onSwitchChange" data-field="cpr" color="#FF9800" />
+            </view>
+          </view>
+          <view class="switch-item">
+            <view class="switch-icon" style="background:#E8F5E9;">
+              <text style="color:#4CAF50;font-weight:bold;">成</text>
+            </view>
+            <view class="switch-content">
+              <text class="switch-text">复苏成功</text>
+              <switch checked="{{cprSuccess}}" bindchange="onSwitchChange" data-field="cprSuccess" color="#4CAF50" />
+            </view>
+          </view>
+        </view>
+        
+        <view class="section-subtitle">转归情况</view>
+        <view class="switch-grid">
+          <view class="switch-item">
+            <view class="switch-icon" style="background:#FFEBEE;">
+              <text style="color:#D32F2F;font-weight:bold;">亡</text>
+            </view>
+            <view class="switch-content">
+              <text class="switch-text">是否死亡</text>
+              <switch checked="{{death}}" bindchange="onSwitchChange" data-field="death" color="#D32F2F" />
+            </view>
+          </view>
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label">抢救病人转归</label>
+          <picker range="{{outcomeOptions}}" bindchange="onOutcomeChange">
+            <view class="picker-value">{{outcome || '请选择转归情况'}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 手术信息 -->
+    <view class="card">
+      <view class="card-title"><text class="title-icon">🔪</text>手术信息</view>
+      
+      <view class="switch-grid">
+        <view class="switch-item">
+          <view class="switch-icon" style="background:#FFEBEE;">
+            <text style="color:#D32F2F;font-weight:bold;">手</text>
+          </view>
+          <view class="switch-content">
+            <text class="switch-text">急诊手术</text>
+            <switch checked="{{surgery}}" bindchange="onSwitchChange" data-field="surgery" color="#D32F2F" />
+          </view>
+        </view>
+        <view class="switch-item">
+          <view class="switch-icon" style="background:#FFF8E1;">
+            <text style="color:#F57C00;font-weight:bold;">创</text>
+          </view>
+          <view class="switch-content">
+            <text class="switch-text">严重创伤</text>
+            <switch checked="{{severeTrauma}}" bindchange="onSwitchChange" data-field="severeTrauma" color="#FF9800" />
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-group" wx:if="{{surgery}}">
+        <label class="form-label">手术时间</label>
+        <picker mode="multiSelector" bindchange="onSurgeryTimeChange" bindcolumnchange="onSurgeryTimeColumnChange" value="{{surgeryTimeMultiIndex}}" range="{{surgeryTimeMultiArray}}">
+          <view class="picker-value">{{surgeryTimeStr || '请选择手术时间'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="btn-group">
+      <button class="btn btn-primary" bindtap="onSubmit">保存患者信息</button>
+      <button class="btn btn-outline" bindtap="resetForm">重置表单</button>
+    </view>
+    
+    <view style="height:50rpx;"></view>
+  </scroll-view>
+
+  <!-- OCR编辑弹窗 -->
+  <view class="ocr-edit-overlay" wx:if="{{showOcrEditModal}}" bindtap="cancelOcrEdit">
+    <view class="ocr-edit-modal" catchtap="noop">
+      <view class="ocr-edit-header">编辑OCR内容</view>
+      <textarea class="ocr-edit-textarea" value="{{editOcrText}}" bindinput="onEditOcrInput" placeholder="编辑OCR识别内容..." auto-focus="{{false}}" />
+      <view class="ocr-edit-actions">
+        <view class="ocr-edit-btn ocr-edit-cancel" bindtap="cancelOcrEdit">取消</view>
+        <view class="ocr-edit-btn ocr-edit-save" bindtap="saveOcrEdit">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

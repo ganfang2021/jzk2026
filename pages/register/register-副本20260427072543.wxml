@@ -1,0 +1,123 @@
+<view class="register-container">
+  <!-- 装饰性背景元素 -->
+  <view class="deco-circle reg-deco-1"></view>
+  <view class="deco-circle reg-deco-2"></view>
+  <view class="deco-circle reg-deco-3"></view>
+
+  <!-- 头部 -->
+  <view class="register-header">
+    <view class="logo-wrapper">
+      <view class="logo-ring"></view>
+      <view class="logo">
+        <text class="logo-icon">👨‍⚕️</text>
+      </view>
+    </view>
+    <view class="title">创建账号</view>
+    <view class="subtitle">注册您的医生账号</view>
+  </view>
+
+  <!-- 注册卡片 -->
+  <view class="register-card">
+    <view class="register-card-header">
+      <text class="card-header-icon">📝</text>
+      <text class="card-header-title">填写信息</text>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>用户名</text>
+        <text class="required">*</text>
+      </view>
+      <view class="input-wrapper">
+        <text class="input-icon">👤</text>
+        <input
+          class="form-input"
+          placeholder="3-20个字符"
+          value="{{username}}"
+          bindinput="onUsernameInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>密码</text>
+        <text class="required">*</text>
+      </view>
+      <view class="input-wrapper">
+        <text class="input-icon">🔒</text>
+        <input
+          class="form-input"
+          placeholder="至少6位"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          password
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>确认密码</text>
+        <text class="required">*</text>
+      </view>
+      <view class="input-wrapper">
+        <text class="input-icon">🔒</text>
+        <input
+          class="form-input"
+          placeholder="再次输入密码"
+          value="{{confirmPassword}}"
+          bindinput="onConfirmPasswordInput"
+          password
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>昵称</text>
+        <text class="required">*</text>
+      </view>
+      <view class="input-wrapper">
+        <text class="input-icon">🏷️</text>
+        <input
+          class="form-input"
+          placeholder="您的称呼"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>角色</text>
+      </view>
+      <picker mode="selector" range="{{roleRange}}" bindchange="onRoleChange">
+        <view class="input-wrapper picker-wrapper">
+          <text class="input-icon">👨‍⚕️</text>
+          <view class="form-input picker-value">
+            {{role === 'doctor' ? '医生' : role === 'nurse' ? '护士' : '管理员'}}
+          </view>
+        </view>
+      </picker>
+    </view>
+
+    <button
+      class="register-btn"
+      bindtap="onRegister"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+    >
+      {{loading ? '注册中...' : '注  册'}}
+    </button>
+
+    <view class="form-footer">
+      <text class="link" bindtap="onBack">返回登录</text>
+    </view>
+  </view>
+</view>

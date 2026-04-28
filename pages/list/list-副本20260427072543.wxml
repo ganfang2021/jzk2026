@@ -1,0 +1,79 @@
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="user-info">
+    <view>
+      <text class="user-name">{{currentUser.nickname}} ({{currentUser.role === 'doctor' ? '医生' : currentUser.role === 'nurse' ? '护士' : '管理员'}})</text>
+    </view>
+    <text class="patient-count">📋 {{totalCount}}人</text>
+  </view>
+
+  <view class="search-box">
+    <input class="search-input" placeholder="搜索患者姓名、诊断..." bindinput="onSearch" value="{{searchTerm}}" />
+  </view>
+
+  <view class="time-filter">
+    <view class="time-btn {{currentPeriod === 'today' ? 'active' : ''}}" data-period="today" bindtap="setTimePeriod">今日</view>
+    <view class="time-btn {{currentPeriod === 'week' ? 'active' : ''}}" data-period="week" bindtap="setTimePeriod">本周</view>
+    <view class="time-btn {{currentPeriod === 'month' ? 'active' : ''}}" data-period="month" bindtap="setTimePeriod">本月</view>
+    <view class="time-btn {{currentPeriod === 'year' ? 'active' : ''}}" data-period="year" bindtap="setTimePeriod">本年</view>
+    <view class="time-btn {{currentPeriod === 'all' ? 'active' : ''}}" data-period="all" bindtap="setTimePeriod">全部</view>
+  </view>
+
+  <view wx:if="{{displayPatients.length > 0}}" class="patient-list-wrap">
+    <scroll-view scroll-y style="height:{{visibleHeight}}px;" bindscrolltolower="onLoadMore">
+      <view wx:for="{{displayPatients}}" wx:key="id" class="patient-item" data-level="{{item.triageLevel}}">
+        <view class="patient-level level-{{getLevelNumber(item.triageLevel)}}">{{item.triageLevel}}</view>
+        <view class="patient-info">
+          <view class="patient-name">
+            {{item.name}} {{item.gender}} {{item.age}}岁
+            <text wx:if="{{item.ocrResult}}" class="ocr-badge" data-id="{{item.id}}" catchtap="viewOcrResult">OCR</text>
+          </view>
+          <view class="patient-meta">
+            <text>入: {{formatDateTime(item.inTime)}}</text>
+            <text wx:if="{{item.outTime}}">出: {{formatDateTime(item.outTime)}}</text>
+            <text wx:else style="color:#FF9800">留观中</text>
+          </view>
+          <view class="patient-meta" wx:if="{{item.diagnosis}}">
+            <text>诊: {{item.diagnosis}}</text>
+          </view>
+          <view class="patient-meta" wx:if="{{item.createdByName}}">
+            <text style="color:var(--primary);font-size:24rpx;">录入: {{item.createdByName}}</text>
+          </view>
+        </view>
+        <view class="patient-actions" wx:if="{{item._canEdit}}">
+          <view class="btn-icon edit" data-id="{{item.id}}" data-name="{{item.name}}" catchtap="onEditPatient">编辑</view>
+          <view class="btn-icon delete" data-id="{{item.id}}" data-name="{{item.name}}" catchtap="confirmDelete">删除</view>
+          <view class="btn-icon detail" data-id="{{item.id}}" catchtap="viewPatientDetail">详情</view>
+          <view class="btn-icon ocr" wx:if="{{item.ocrResult}}" data-id="{{item.id}}" catchtap="viewOcrResult">OCR</view>
+        </view>
+        <view class="patient-view-only" wx:else>
+          <view class="btn-icon ocr" wx:if="{{item.ocrResult}}" data-id="{{item.id}}" catchtap="viewOcrResult">查看OCR</view>
+          <view class="btn-icon detail" data-id="{{item.id}}" catchtap="viewPatientDetail">详情</view>
+        </view>
+      </view>
+      <view wx:if="{{hasMore}}" class="load-more-tip">上拉加载更多...</view>
+      <view wx:elif="{{totalCount > 30}}" class="load-more-tip">已加载全部 {{totalCount}} 条</view>
+    </scroll-view>
+  </view>
+
+  <view wx:else class="empty-state">
+    <text style="font-size:64rpx;display:block;margin-bottom:20rpx;">📋</text>
+    <text style="font-size:28rpx;color:var(--text-secondary);">暂无患者记录</text>
+    <text style="font-size:24rpx;color:var(--text-disabled);display:block;margin-top:12rpx;">切换时间范围或前往「患者登记」添加</text>
+  </view>
+
+  <!-- 删除确认弹窗 -->
+  <view class="modal-overlay" wx:if="{{showDeleteModal}}" bindtap="cancelDelete">
+    <view class="modal">
+      <view class="modal-header">确认删除</view>
+      <view class="modal-body">
+        <text>确定要删除患者「{{deletePatientName}}」的信息吗？</text>
+        <text style="color:#D32F2F;display:block;margin-top:16rpx;font-size:24rpx;">此操作不可恢复！</text>
+      </view>
+      <view class="modal-footer">
+        <button class="btn btn-outline" bindtap="cancelDelete">取消</button>
+        <button class="btn btn-danger" bindtap="doDelete">确认删除</button>
+      </view>
+    </view>
+  </view>
+</view>

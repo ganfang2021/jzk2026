@@ -1,0 +1,369 @@
+/* pages/detail/detail.wxss */
+page {
+  background: var(--background);
+}
+
+.page {
+  padding: var(--spacing-2xl);
+  box-sizing: border-box;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+
+/* 患者头部 */
+.patient-header {
+  position: relative;
+}
+
+.patient-level-badge {
+  position: absolute;
+  top: var(--spacing-2xl);
+  right: var(--spacing-2xl);
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-2xl);
+  color: #ffffff;
+}
+
+.level-1 { background: var(--level-1); }
+.level-2 { background: var(--level-2); }
+.level-3 { background: var(--level-3); }
+.level-4 { background: var(--level-4); }
+
+.patient-main-info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.patient-name {
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.patient-gender-age {
+  font-size: var(--font-lg);
+  color: var(--text-secondary);
+}
+
+.patient-times {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  width: 140rpx;
+  font-size: var(--font-base);
+  color: var(--text-hint);
+  flex-shrink: 0;
+}
+
+.info-value {
+  flex: 1;
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.diagnosis-text {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* 区域标题 */
+.section-title {
+  font-size: var(--font-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* 生命体征网格 */
+.vitals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+}
+
+.vital-item {
+  flex: 1;
+  min-width: 140rpx;
+  background: var(--surface-alt);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  text-align: center;
+}
+
+.vital-label {
+  display: block;
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+  margin-bottom: var(--spacing-sm);
+}
+
+.vital-value {
+  display: block;
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.vital-unit {
+  font-size: var(--font-xs);
+  font-weight: 400;
+  color: var(--text-hint);
+}
+
+.empty-hint {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-hint);
+  font-size: var(--font-sm);
+}
+
+/* 标签 */
+.info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.tag {
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 500;
+}
+
+.tag-blue { background: #E3F2FD; color: #1565C0; }
+.tag-orange { background: #FFF3E0; color: #E65100; }
+.tag-red { background: #FFEBEE; color: #C62828; }
+.tag-green { background: #E8F5E9; color: #2E7D32; }
+.tag-purple { background: #F3E5F5; color: #7B1FA2; }
+.tag-gray { background: #F5F5F5; color: #616161; }
+
+/* OCR 结果区块 */
+.ocr-section-card {
+  background: var(--surface-alt);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+  border: 1rpx solid var(--border-light);
+  overflow: hidden;
+}
+
+.ocr-section-card:last-child {
+  margin-bottom: 0;
+}
+
+.ocr-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--primary-lightest);
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.ocr-section-label {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.ocr-section-time {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+}
+
+.ocr-content {
+  padding: var(--spacing-lg);
+  font-size: var(--font-md);
+  color: var(--text-primary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+  max-height: 800rpx;
+  overflow-y: auto;
+}
+
+/* 按钮组 */
+.btn-group {
+  margin-top: var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  box-shadow: 0 4rpx 16rpx rgba(26,115,232,0.3);
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: var(--primary);
+  border: 2rpx solid var(--primary-lighter);
+}
+
+/* OCR编辑按钮 */
+.ocr-section-edit {
+  font-size: var(--font-sm);
+  color: var(--primary);
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-sm);
+  background: rgba(26,115,232,0.08);
+}
+
+.ocr-section-edit:active {
+  opacity: 0.6;
+}
+
+/* OCR编辑弹窗 */
+.ocr-edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  box-sizing: border-box;
+}
+
+.ocr-edit-modal {
+  background: #ffffff;
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20rpx 80rpx rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.ocr-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-lg);
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.ocr-edit-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ocr-edit-count {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  background: var(--surface-alt);
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-lg);
+}
+
+.ocr-edit-textarea {
+  margin: var(--spacing-lg) var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  background: var(--surface-alt);
+  min-height: 400rpx;
+  max-height: 50vh;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.ocr-edit-tips {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  text-align: center;
+  padding: 0 var(--spacing-2xl) var(--spacing-sm);
+}
+
+.ocr-edit-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-2xl) var(--spacing-2xl);
+}
+
+.ocr-edit-btn {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 600;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.ocr-edit-reset {
+  background: linear-gradient(135deg, #FF9800, #FFB74D);
+  color: #ffffff;
+}
+
+.ocr-edit-cancel {
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+}
+
+.ocr-edit-save {
+  background: linear-gradient(145deg, #1A73E8, #4A90D9);
+  color: #ffffff;
+}
+
+.ocr-edit-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}

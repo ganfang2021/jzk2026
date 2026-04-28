@@ -1,0 +1,315 @@
+<view class="container">
+  <!-- 时间筛选 -->
+  <view class="time-filter" style="margin-bottom:30rpx;">
+    <view class="time-btn {{currentPeriod === 'today' ? 'active' : ''}}" data-period="today" bindtap="onPeriodChange">今日</view>
+    <view class="time-btn {{currentPeriod === 'week' ? 'active' : ''}}" data-period="week" bindtap="onPeriodChange">本周</view>
+    <view class="time-btn {{currentPeriod === 'month' ? 'active' : ''}}" data-period="month" bindtap="onPeriodChange">本月</view>
+    <view class="time-btn {{currentPeriod === 'year' ? 'active' : ''}}" data-period="year" bindtap="onPeriodChange">本年</view>
+    <view class="time-btn {{currentPeriod === 'all' ? 'active' : ''}}" data-period="all" bindtap="onPeriodChange">全部</view>
+  </view>
+
+  <!-- 查看模式切换 -->
+  <view class="admin-view-mode">
+    <view class="mode-btn {{viewMode === 'self' ? 'active' : ''}}" data-mode="self" bindtap="onViewModeChange">
+      <text class="mode-icon">👤</text>
+      <text>我的数据</text>
+    </view>
+    <view class="mode-btn {{viewMode === 'all' ? 'active' : ''}}" data-mode="all" bindtap="onViewModeChange">
+      <text class="mode-icon">👥</text>
+      <text>所有用户</text>
+    </view>
+  </view>
+
+  <!-- 功能按钮 -->
+  <view class="action-buttons">
+    <view class="action-btn" bindtap="onExportPatients">
+      <view class="action-icon">📤</view>
+      <view class="action-text">导出患者</view>
+    </view>
+    <view class="action-btn" bindtap="onImportPatients">
+      <view class="action-icon">📥</view>
+      <view class="action-text">导入患者</view>
+    </view>
+    <view class="action-btn" bindtap="onExportStats">
+      <view class="action-icon">📊</view>
+      <view class="action-text">导出统计</view>
+    </view>
+  </view>
+
+  <!-- 用户数据列表(管理员查看所有用户时显示) -->
+  <view class="user-data-list" wx:if="{{isAdmin && viewMode === 'all' && allUsersData.length > 0}}">
+    <view class="card">
+      <view class="card-title"><text class="title-icon">👥</text>用户数据统计</view>
+      <view class="user-stats-list">
+        <view class="user-stats-item" wx:for="{{allUsersData}}" wx:key="userId">
+          <view class="user-info-row">
+            <view class="user-name">{{item.nickname || item.username}}</view>
+            <view class="user-role">{{item.role === 'admin' ? '管理员' : '医生'}}</view>
+          </view>
+          <view class="user-stats-row">
+            <view class="user-stat">
+              <text class="stat-label">患者数:</text>
+              <text class="stat-value">{{item.patientCount}}</text>
+            </view>
+            <view class="user-stat">
+              <text class="stat-label">今日:</text>
+              <text class="stat-value">{{item.stats.total}}</text>
+            </view>
+            <view class="user-stat">
+              <text class="stat-label">Ⅰ级:</text>
+              <text class="stat-value text-danger">{{item.stats.level1}}</text>
+            </view>
+            <view class="user-stat">
+              <text class="stat-label">Ⅱ级:</text>
+              <text class="stat-value text-warning">{{item.stats.level2}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分诊趋势图 -->
+  <view class="card">
+    <view class="card-title">
+      <view style="display:flex;align-items:center;flex:1;">
+        <text class="title-icon">📈</text>
+        <text>分诊趋势</text>
+      </view>
+      <view class="trend-toggle">
+        <view class="trend-btn {{trendDays === 7 ? 'active' : ''}}" data-days="{{7}}" bindtap="onTrendDaysChange">近7天</view>
+        <view class="trend-btn {{trendDays === 30 ? 'active' : ''}}" data-days="{{30}}" bindtap="onTrendDaysChange">近30天</view>
+      </view>
+    </view>
+    <view class="chart-wrapper">
+      <canvas type="2d" id="trendChart" class="trend-canvas"></canvas>
+    </view>
+    <view class="chart-legend">
+      <view class="legend-item">
+        <view class="legend-dot" style="background:#D50000;"></view>
+        <text>Ⅰ级</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot" style="background:#E65100;"></view>
+        <text>Ⅱ级</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot" style="background:#F9A825;"></view>
+        <text>Ⅲ级</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot" style="background:#2E7D32;"></view>
+        <text>Ⅳ级</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分诊统计 -->
+  <view class="card">
+    <view class="card-title"><text class="title-icon">📊</text>预检分诊统计</view>
+    <view class="triage-stats">
+      <view class="triage-stat level-1">
+        <view class="triage-stat-value">{{stats.level1}}</view>
+        <view class="triage-stat-label">Ⅰ级 危重</view>
+      </view>
+      <view class="triage-stat level-2">
+        <view class="triage-stat-value">{{stats.level2}}</view>
+        <view class="triage-stat-label">Ⅱ级 急症</view>
+      </view>
+      <view class="triage-stat level-3">
+        <view class="triage-stat-value">{{stats.level3}}</view>
+        <view class="triage-stat-label">Ⅲ级 紧急</view>
+      </view>
+      <view class="triage-stat level-4">
+        <view class="triage-stat-value">{{stats.level4}}</view>
+        <view class="triage-stat-label">Ⅳ级 非紧急</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 中位数统计 -->
+  <view class="card">
+    <view class="card-title"><text class="title-icon">⏱️</text>中位数统计</view>
+    
+    <view class="median-card" style="background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);">
+      <view class="median-title">抢救室滞留时间中位数 (Ⅰ/Ⅱ/Ⅲ级)</view>
+      <view class="median-value">
+        {{stats.medianStayTimeFmt}}
+        <text class="median-unit">分钟</text>
+      </view>
+      <view class="median-sub">有效患者数: {{stats.stayCount || 0}} 人</view>
+    </view>
+
+    <view class="median-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+      <view class="median-title">严重创伤就诊-手术时间中位数</view>
+      <view class="median-value">
+        {{stats.medianSurgeryTimeFmt}}
+        <text class="median-unit">分钟</text>
+      </view>
+      <view class="median-sub">有效患者数: {{stats.surgeryDelayCount || 0}} 人</view>
+    </view>
+  </view>
+
+  <!-- 抢救与治疗统计 -->
+  <view class="card">
+    <view class="card-title"><text class="title-icon">🏥</text>抢救与治疗统计</view>
+    
+    <!-- 住院与抢救 -->
+    <view class="stats-section">
+      <view class="stats-section-title">住院与抢救</view>
+      <view class="stats-grid-3">
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#E3F2FD;">
+            <text style="color:#1976D2;font-weight:bold;">院</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.hospitalized}}</view>
+            <view class="stat-text">住院患者</view>
+          </view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#FFF3E0;">
+            <text style="color:#FF9800;font-weight:bold;">急</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.rescued}}</view>
+            <view class="stat-text">抢救患者</view>
+          </view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#FFEBEE;">
+            <text style="color:#D32F2F;font-weight:bold;">术</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.surgery}}</view>
+            <view class="stat-text">手术患者</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 创伤统计 -->
+    <view class="stats-section">
+      <view class="stats-section-title">创伤统计</view>
+      <view class="stats-grid-2">
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-danger">{{stats.severeTrauma}}</view>
+            <view class="stat-text-lg">严重创伤患者</view>
+          </view>
+        </view>
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-danger">{{stats.severeTraumaSurgery}}</view>
+            <view class="stat-text-lg">严重创伤手术</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 心肺复苏统计 -->
+    <view class="stats-section">
+      <view class="stats-section-title">心肺复苏</view>
+      <view class="stats-grid-2">
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg">{{stats.cpr}}</view>
+            <view class="stat-text-lg">心肺复苏人数</view>
+          </view>
+        </view>
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-success">{{stats.cprSuccess}}</view>
+            <view class="stat-text-lg">复苏成功人数</view>
+          </view>
+        </view>
+      </view>
+      <view class="stats-grid-2" style="margin-top:20rpx;">
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-success">{{stats.cprRate}}%</view>
+            <view class="stat-text-lg">复苏成功率</view>
+          </view>
+        </view>
+        <view class="stat-item-lg">
+          <view class="stat-info-center">
+            <view class="stat-num-lg">{{stats.cpr48h}}</view>
+            <view class="stat-text-lg">复苏成功48h</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作统计 -->
+    <view class="stats-section">
+      <view class="stats-section-title">操作统计</view>
+      <view class="stats-grid-3">
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#E8F5E9;">
+            <text style="color:#4CAF50;font-weight:bold;">静</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.ivAccess}}</view>
+            <view class="stat-text">静脉通道</view>
+          </view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#E0F7FA;">
+            <text style="color:#00ACC1;font-weight:bold;">插</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.intubated}}</view>
+            <view class="stat-text">气管插管</view>
+          </view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-icon" style="background:#F3E5F5;">
+            <text style="color:#AB47BC;font-weight:bold;">中</text>
+          </view>
+          <view class="stat-info">
+            <view class="stat-num">{{stats.centralLine}}</view>
+            <view class="stat-text">中心静脉</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 转归统计 -->
+    <view class="stats-section">
+      <view class="stats-section-title">转归统计</view>
+      <view class="stats-grid-2">
+        <view class="stat-item-lg stat-card-danger">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-danger">{{stats.death}}</view>
+            <view class="stat-text-lg">死亡人数</view>
+          </view>
+        </view>
+        <view class="stat-item-lg stat-card-success">
+          <view class="stat-info-center">
+            <view class="stat-num-lg stat-success">{{stats.hospitalized}}</view>
+            <view class="stat-text-lg">好转出院</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 总体统计 -->
+  <view class="card">
+    <view class="card-title"><text class="title-icon">📈</text>总体统计</view>
+    <view class="stats-grid-2">
+      <view class="stat-item-lg stat-total">
+        <view class="stat-info-center">
+          <view class="stat-num-lg stat-primary">{{stats.total}}</view>
+          <view class="stat-text-lg">总患者数</view>
+        </view>
+      </view>
+      <view class="stat-item-lg">
+        <view class="stat-info-center">
+          <view class="stat-num-lg">{{stats.male}} / {{stats.female}}</view>
+          <view class="stat-text-lg">男 / 女</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

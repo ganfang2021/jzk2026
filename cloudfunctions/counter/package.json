@@ -1,0 +1,9 @@
+{
+  "name": "counter",
+  "version": "1.0.0",
+  "description": "计数器服务，用于生成全局唯一ID",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

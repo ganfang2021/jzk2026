@@ -1,0 +1,57 @@
+# 微信小程序
+node_modules/
+*.log
+*.tmp
+
+# 开发工具
+.project
+/.project
+.settings/
+
+# 编译产物
+/dist/
+
+# 本地配置
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 云开发相关（包含用户特有配置）
+cloudfunctions/*/node_modules/
+
+# 日志
+*.log
+logs/
+
+# Claude 记忆目录
+.claude/
+memory/
+
+# 备份文件
+app-副本*
+*副本*.js
+*副本*.json
+*副本*.wxss
+config-副本.js
+project.config-副本.json
+*-副本*
+
+# 文档（按需保留）
+*.md
+
+# 云函数子目录
+cloudfunctions/cloudfunctions/
+cloudfunctions/initDatabaseIndexes/
+
+# 开发工具目录
+.codeartsdoer/
+.arts/

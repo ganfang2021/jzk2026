@@ -1,0 +1,86 @@
+<view class="container">
+  <view class="header-card">
+    <view class="header-icon">📦</view>
+    <view class="header-title">数据迁移</view>
+    <view class="header-desc">将本地数据迁移到云端存储</view>
+  </view>
+
+  <!-- 当前状态 -->
+  <view class="card">
+    <view class="card-title">当前状态</view>
+    <view class="status-list">
+      <view class="status-item">
+        <text class="status-label">云开发状态</text>
+        <text class="status-value {{cloudEnabled ? 'success' : 'error'}}">{{cloudEnabled ? '已连接' : '未连接'}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">本地数据</text>
+        <text class="status-value">{{localCount}} 条</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">云端数据</text>
+        <text class="status-value">{{cloudCount}} 条</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">需要迁移</text>
+        <text class="status-value {{localCount > 0 ? 'warning' : 'success'}}">{{localCount > 0 ? localCount + ' 条' : '无需迁移'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 迁移说明 -->
+  <view class="card">
+    <view class="card-title">迁移说明</view>
+    <view class="info-text">
+      <text>1. 迁移过程预计需要几分钟，请保持网络连接</text>
+      <text>2. 迁移过程中请勿关闭小程序</text>
+      <text>3. 迁移完成后数据将保存在云端</text>
+      <text>4. 迁移后可实现多设备同步和协同操作</text>
+    </view>
+  </view>
+
+  <!-- 迁移按钮 -->
+  <view class="btn-area" wx:if="{{localCount > 0 && cloudEnabled}}">
+    <button class="btn btn-primary" bindtap="onMigrate" loading="{{migrating}}">
+      {{migrating ? '迁移中...' : '开始迁移'}}
+    </button>
+  </view>
+
+  <!-- 无需迁移 -->
+  <view class="btn-area" wx:if="{{localCount == 0 && cloudEnabled}}">
+    <view class="success-tip">
+      <text>✅ 数据已是最新，无需迁移</text>
+    </view>
+  </view>
+
+  <!-- 云开发未连接 -->
+  <view class="btn-area" wx:if="{{!cloudEnabled}}">
+    <view class="error-tip">
+      <text>⚠️ 云开发未连接，请先在「云开发」中开通服务</text>
+    </view>
+    <button class="btn btn-outline" bindtap="onCheckCloud">重新检查</button>
+  </view>
+
+  <!-- 迁移进度 -->
+  <view class="card" wx:if="{{migrating}}">
+    <view class="card-title">迁移进度</view>
+    <view class="progress-area">
+      <progress percent="{{progress}}" show-info stroke-width="10" />
+      <text class="progress-text">{{progressText}}</text>
+    </view>
+  </view>
+
+  <!-- 迁移结果 -->
+  <view class="card" wx:if="{{migrateResult}}">
+    <view class="card-title">迁移结果</view>
+    <view class="result-info">
+      <text>成功: {{migrateResult.success}} 条</text>
+      <text wx:if="{{migrateResult.failed > 0}}">失败: {{migrateResult.failed}} 条</text>
+    </view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="btn-area" wx:if="{{!migrating}}">
+    <button class="btn btn-outline" bindtap="onGoBack">返回列表</button>
+  </view>
+</view>

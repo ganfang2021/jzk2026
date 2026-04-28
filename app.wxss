@@ -1,0 +1,1093 @@
+/* 急诊科预检分诊信息系统 - 全局样式 v3.0
+ * 高级医疗主题：深蓝 + 浅蓝 + 白色，轻量玻璃质感
+ */
+
+/* ==================== CSS变量 ==================== */
+page {
+  /* 主色 - 深邃医疗蓝 */
+  --primary: #1A73E8;
+  --primary-light: #4A90D9;
+  --primary-lighter: #A8C7FA;
+  --primary-lightest: #E8F0FE;
+  --primary-dark: #1557B0;
+  --primary-deeper: #0D47A1;
+  --primary-gradient: linear-gradient(135deg, #1A73E8 0%, #4A90D9 100%);
+  --primary-gradient-deep: linear-gradient(145deg, #0D47A1 0%, #1A73E8 50%, #4A90D9 100%);
+
+  /* 功能色 */
+  --success: #2E7D32;
+  --success-bg: #E8F5E9;
+  --warning: #E65100;
+  --warning-bg: #FFF3E0;
+  --danger: #C62828;
+  --danger-bg: #FFEBEE;
+  --info: #0277BD;
+  --info-bg: #E1F5FE;
+
+  /* 分诊级别色 - 更鲜明 */
+  --level-1: #D50000;
+  --level-1-bg: #FFEBEE;
+  --level-2: #E65100;
+  --level-2-bg: #FFF3E0;
+  --level-3: #F9A825;
+  --level-3-bg: #FFF8E1;
+  --level-4: #2E7D32;
+  --level-4-bg: #E8F5E9;
+
+  /* 中性色 */
+  --background: #F0F4F9;
+  --surface: #FFFFFF;
+  --surface-alt: #F8FAFD;
+  --text-primary: #1A2332;
+  --text-secondary: #5A6B7D;
+  --text-hint: #8E9BAA;
+  --text-disabled: #B0BEC5;
+  --border: #E3E8EF;
+  --border-light: #F0F2F5;
+
+  /* 字体 */
+  --font-xs: 22rpx;
+  --font-sm: 24rpx;
+  --font-md: 26rpx;
+  --font-base: 28rpx;
+  --font-lg: 30rpx;
+  --font-xl: 32rpx;
+  --font-2xl: 36rpx;
+  --font-3xl: 42rpx;
+  --font-4xl: 52rpx;
+
+  /* 间距 */
+  --spacing-xs: 8rpx;
+  --spacing-sm: 12rpx;
+  --spacing-md: 16rpx;
+  --spacing-lg: 20rpx;
+  --spacing-xl: 24rpx;
+  --spacing-2xl: 30rpx;
+  --spacing-3xl: 40rpx;
+  --spacing-4xl: 50rpx;
+
+  /* 圆角 */
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 20rpx;
+  --radius-2xl: 24rpx;
+  --radius-3xl: 32rpx;
+  --radius-full: 9999rpx;
+
+  /* 阴影系统 - 更真实 */
+  --shadow-sm: 0 1rpx 3rpx rgba(0, 0, 0, 0.04), 0 1rpx 2rpx rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4rpx 12rpx rgba(0, 0, 0, 0.05), 0 2rpx 4rpx rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10rpx 30rpx rgba(0, 0, 0, 0.06), 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 16rpx 48rpx rgba(0, 0, 0, 0.08), 0 6rpx 16rpx rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 4rpx 20rpx rgba(26, 115, 232, 0.25);
+
+  /* 动画 */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: all 0.3s var(--ease-out);
+  --transition-fast: all 0.15s var(--ease-out);
+
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* ==================== 通用容器 ==================== */
+.container {
+  padding: var(--spacing-xl);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ==================== 卡片系统 v2 ==================== */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片顶部色条装饰 */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rpx;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.card:active::before {
+  opacity: 1;
+}
+
+.card-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1rpx solid var(--border-light);
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.5rpx;
+}
+
+.card-title .title-icon {
+  width: 44rpx;
+  height: 44rpx;
+  background: var(--primary-lightest);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-lg);
+  margin-right: var(--spacing-md);
+  color: var(--primary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ==================== 表单系统 v2 ==================== */
+.form-group {
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-label {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.3rpx;
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* 填充式输入框 - 更现代的样式 */
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 var(--spacing-lg);
+  background: var(--surface-alt);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition: var(--transition-fast);
+  caret-color: var(--primary);
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4rpx rgba(26, 115, 232, 0.08);
+}
+
+.form-input::placeholder {
+  color: var(--text-disabled);
+}
+
+.form-input.error {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* 选择器 */
+.picker-value {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 var(--spacing-lg);
+  background: var(--surface-alt);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.picker-value::after {
+  content: '';
+  position: absolute;
+  right: var(--spacing-lg);
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 3rpx solid var(--text-hint);
+  border-bottom: 3rpx solid var(--text-hint);
+  transform: rotate(45deg);
+  margin-top: -10rpx;
+}
+
+/* ==================== 分诊级别选择器 v2 ==================== */
+.triage-selector {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.triage-option {
+  flex: 1;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--font-2xl);
+  background: var(--surface);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  border: 2rpx solid var(--border);
+}
+
+.triage-option:active {
+  transform: scale(0.94);
+}
+
+/* Ⅰ级 - 红色 */
+.triage-option[data-level="Ⅰ"] {
+  color: var(--level-1);
+  border-color: var(--level-1-bg);
+  background: #FFF5F5;
+}
+.triage-option[data-level="Ⅰ"].selected {
+  background: linear-gradient(145deg, #D50000 0%, #FF1744 100%);
+  color: #fff;
+  border-color: #D50000;
+  box-shadow: 0 6rpx 20rpx rgba(213, 0, 0, 0.3);
+}
+
+/* Ⅱ级 - 橙色 */
+.triage-option[data-level="Ⅱ"] {
+  color: var(--level-2);
+  border-color: var(--level-2-bg);
+  background: #FFF8F0;
+}
+.triage-option[data-level="Ⅱ"].selected {
+  background: linear-gradient(145deg, #E65100 0%, #FF6D00 100%);
+  color: #fff;
+  border-color: #E65100;
+  box-shadow: 0 6rpx 20rpx rgba(230, 81, 0, 0.3);
+}
+
+/* Ⅲ级 - 黄色 */
+.triage-option[data-level="Ⅲ"] {
+  color: #F57F17;
+  border-color: var(--level-3-bg);
+  background: #FFFEF0;
+}
+.triage-option[data-level="Ⅲ"].selected {
+  background: linear-gradient(145deg, #F9A825 0%, #FFD54F 100%);
+  color: #fff;
+  border-color: #F9A825;
+  box-shadow: 0 6rpx 20rpx rgba(249, 168, 37, 0.3);
+}
+
+/* Ⅳ级 - 绿色 */
+.triage-option[data-level="Ⅳ"] {
+  color: var(--level-4);
+  border-color: var(--level-4-bg);
+  background: #F1F9F0;
+}
+.triage-option[data-level="Ⅳ"].selected {
+  background: linear-gradient(145deg, #2E7D32 0%, #4CAF50 100%);
+  color: #fff;
+  border-color: #2E7D32;
+  box-shadow: 0 6rpx 20rpx rgba(46, 125, 50, 0.3);
+}
+
+/* 分诊级别上的小标签 */
+.triage-option .level-label {
+  display: block;
+  font-size: var(--font-xs);
+  font-weight: 400;
+  margin-top: 4rpx;
+  opacity: 0.7;
+}
+
+.triage-option.selected .level-label {
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==================== 开关系统 v2 ==================== */
+.switch-group-main {
+  display: flex;
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  border: 2rpx solid transparent;
+  transition: var(--transition);
+}
+
+.switch-group-main:active {
+  border-color: var(--primary-lighter);
+}
+
+.switch-main-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  margin-right: var(--spacing-lg);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.switch-main-content {
+  flex: 1;
+}
+
+.switch-main-label {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.switch-main-desc {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  margin-top: 2rpx;
+}
+
+/* 抢救详情区 */
+.rescue-detail {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  border: 1rpx solid var(--border-light);
+}
+
+.section-subtitle {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--warning);
+  margin: var(--spacing-lg) 0 var(--spacing-md);
+  padding-left: var(--spacing-sm);
+  border-left: 4rpx solid var(--warning);
+  letter-spacing: 0.5rpx;
+}
+
+.section-subtitle:first-of-type {
+  margin-top: 0;
+}
+
+.switch-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.switch-item {
+  width: calc(50% - 10rpx);
+  display: flex;
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1rpx solid var(--border-light);
+}
+
+.switch-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-lg);
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.switch-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch-text {
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ==================== 诊断/医生选择器弹窗 ==================== */
+.diagnosis-list, .doctor-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1rpx solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: var(--spacing-xs);
+  z-index: 100;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.diagnosis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-bottom: 1rpx solid var(--border-light);
+  font-weight: 600;
+  font-size: var(--font-lg);
+}
+
+.diagnosis-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-alt);
+  border-radius: 50%;
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+}
+
+.diagnosis-search {
+  margin: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  background: var(--surface-alt);
+  width: calc(100% - 2 * var(--spacing-md));
+  box-sizing: border-box;
+}
+
+.diagnosis-scroll {
+  max-height: 400rpx;
+}
+
+.diagnosis-item {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-bottom: 1rpx solid var(--border-light);
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.diagnosis-item:last-child { border-bottom: none; }
+.diagnosis-item:active { background: var(--primary-lightest); }
+
+.diagnosis-empty {
+  padding: var(--spacing-3xl);
+  text-align: center;
+  color: var(--text-disabled);
+}
+
+/* ==================== 按钮系统 v2 ==================== */
+.btn-group {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
+}
+
+.btn {
+  flex: 1;
+  height: 96rpx;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: var(--transition);
+  letter-spacing: 2rpx;
+}
+
+.btn::after { border: none; }
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #fff;
+  box-shadow: 0 6rpx 24rpx rgba(26, 115, 232, 0.25);
+}
+
+.btn-primary:active {
+  box-shadow: 0 3rpx 12rpx rgba(26, 115, 232, 0.2);
+}
+
+.btn-outline {
+  background: var(--surface);
+  border: 2rpx solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:active {
+  background: var(--primary-lightest);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #C62828 0%, #EF5350 100%);
+  color: #fff;
+  box-shadow: 0 6rpx 24rpx rgba(198, 40, 40, 0.25);
+}
+
+/* ==================== 搜索框 ==================== */
+.search-box {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 0 var(--spacing-xl);
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--border-light);
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  font-size: var(--font-base);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.search-input::placeholder {
+  color: var(--text-disabled);
+}
+
+/* ==================== 时间筛选 ==================== */
+.time-filter {
+  display: flex;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 6rpx;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--border-light);
+}
+
+.time-btn {
+  flex: 1;
+  text-align: center;
+  padding: var(--spacing-md) 0;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.time-btn.active {
+  background: var(--primary-gradient);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ==================== 患者列表项 v2 ==================== */
+.patient-item {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  border-left: 6rpx solid var(--border);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.patient-item:active {
+  box-shadow: var(--shadow-md);
+  transform: translateX(4rpx);
+}
+
+.patient-item[data-level="Ⅰ"] { border-left-color: var(--level-1); }
+.patient-item[data-level="Ⅱ"] { border-left-color: var(--level-2); }
+.patient-item[data-level="Ⅲ"] { border-left-color: var(--level-3); }
+.patient-item[data-level="Ⅳ"] { border-left-color: var(--level-4); }
+
+.patient-level {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  font-weight: 800;
+  color: #fff;
+  margin-right: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.level-1 { background: var(--level-1); }
+.level-2 { background: var(--level-2); }
+.level-3 { background: var(--level-3); color: #333; }
+.level-4 { background: var(--level-4); }
+
+.patient-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.patient-name {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4rpx;
+}
+
+.patient-meta {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.patient-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-left: var(--spacing-md);
+}
+
+.btn-icon {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  text-align: center;
+  min-width: 72rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.btn-icon:active { transform: scale(0.9); }
+.btn-icon.edit { background: var(--primary-lightest); color: var(--primary); }
+.btn-icon.delete { background: var(--danger-bg); color: var(--danger); }
+.patient-view-only { font-size: var(--font-xs); color: var(--text-disabled); padding: var(--spacing-sm); }
+
+/* ==================== OCR按钮 ==================== */
+.ocr-section {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+  border-top: 1rpx solid var(--border-light);
+}
+
+.ocr-title {
+  font-size: var(--font-sm);
+  color: var(--text-hint);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 500;
+}
+
+.ocr-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.ocr-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  background: var(--surface-alt);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-fast);
+  border: 1rpx solid var(--border-light);
+}
+
+.ocr-btn:active {
+  background: var(--primary-lightest);
+  border-color: var(--primary-lighter);
+  transform: scale(0.94);
+}
+
+.ocr-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+}
+
+.ocr-text {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ==================== 统计系统 v2 ==================== */
+.triage-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+.triage-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  min-height: 120rpx;
+  justify-content: center;
+}
+
+.triage-stat.level-1 { background: var(--level-1-bg); }
+.triage-stat.level-2 { background: var(--level-2-bg); }
+.triage-stat.level-3 { background: var(--level-3-bg); }
+.triage-stat.level-4 { background: var(--level-4-bg); }
+
+.triage-stat-value {
+  font-size: var(--font-4xl);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.triage-stat-label {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+/* 中位数卡片 - 渐变质感 */
+.median-card {
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-lg);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.median-card:first-of-type {
+  background: linear-gradient(145deg, #1A73E8 0%, #4A90D9 100%);
+}
+
+.median-card:last-of-type {
+  background: linear-gradient(145deg, #0D47A1 0%, #1A73E8 100%);
+}
+
+.median-card::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.median-title {
+  font-size: var(--font-sm);
+  opacity: 0.85;
+  margin-bottom: var(--spacing-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.median-value {
+  font-size: 52rpx;
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+
+.median-unit {
+  font-size: var(--font-base);
+  opacity: 0.7;
+  font-weight: 400;
+  margin-left: var(--spacing-xs);
+}
+
+.median-sub {
+  font-size: var(--font-xs);
+  opacity: 0.6;
+  margin-top: var(--spacing-sm);
+  position: relative;
+  z-index: 1;
+}
+
+/* ==================== 统计网格 ==================== */
+.stats-section {
+  margin-bottom: var(--spacing-xl);
+}
+.stats-section:last-child { margin-bottom: 0; }
+
+.stats-section-title {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-left: var(--spacing-md);
+  border-left: 4rpx solid var(--primary);
+  letter-spacing: 0.5rpx;
+}
+
+.stats-grid-2, .stats-grid-3 {
+  display: grid;
+  gap: var(--spacing-md);
+}
+.stats-grid-2 { grid-template-columns: 1fr 1fr; }
+.stats-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--border-light);
+}
+
+.stat-item-lg {
+  padding: var(--spacing-lg);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--border-light);
+}
+
+.stat-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+  font-size: var(--font-lg);
+  font-weight: 700;
+}
+
+.stat-info { flex: 1; }
+.stat-info-center { text-align: center; }
+
+.stat-num {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-num-lg {
+  font-size: var(--font-4xl);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.stat-text {
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  margin-top: 4rpx;
+}
+
+.stat-text-lg {
+  font-size: var(--font-xs);
+  color: var(--text-hint);
+  margin-top: var(--spacing-xs);
+}
+
+/* 统计色彩辅助 */
+.stat-card-danger {
+  background: linear-gradient(145deg, #FFEBEE 0%, #FFCDD2 100%);
+}
+.stat-card-success {
+  background: linear-gradient(145deg, #E8F5E9 0%, #C8E6C9 100%);
+}
+.stat-total {
+  background: linear-gradient(145deg, #E3F2FD 0%, #BBDEFB 100%);
+}
+
+/* ==================== 功能按钮组 ==================== */
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.action-btn {
+  flex: 1;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-md);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1rpx solid var(--border-light);
+}
+
+.action-btn:active {
+  transform: scale(0.94);
+  box-shadow: var(--shadow-md);
+}
+
+.action-icon { font-size: 44rpx; margin-bottom: var(--spacing-xs); }
+.action-text { font-size: var(--font-xs); color: var(--text-hint); font-weight: 500; }
+
+/* 管理员模式切换 */
+.admin-view-mode {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.mode-btn {
+  flex: 1;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: var(--transition);
+  border: 1rpx solid var(--border-light);
+}
+
+.mode-btn.active {
+  background: var(--primary-gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4rpx 16rpx rgba(26, 115, 232, 0.2);
+}
+
+/* ==================== 弹窗系统 ==================== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-2xl);
+  width: 85%;
+  max-width: 600rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  animation: modalIn 0.3s var(--ease-out);
+}
+
+.modal-header {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1rpx solid var(--border-light);
+}
+
+.modal-body {
+  padding: var(--spacing-2xl);
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid var(--border-light);
+}
+
+.modal-footer .btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  letter-spacing: 1rpx;
+}
+.modal-footer .btn:active { background: var(--surface-alt); }
+.modal-footer .btn-primary { color: var(--primary); font-weight: 600; }
+
+/* ==================== 工具类 ==================== */
+.text-center { text-align: center; }
+.text-danger { color: var(--danger) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-success { color: var(--success) !important; }
+.text-primary { color: var(--primary) !important; }
+.text-hint { color: var(--text-hint) !important; }
+.font-bold { font-weight: 600; }
+.font-black { font-weight: 800; }
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+/* ==================== 动画 ==================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(60rpx) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

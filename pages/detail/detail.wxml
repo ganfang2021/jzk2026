@@ -1,0 +1,101 @@
+<scroll-view class="page" scroll-y>
+  <!-- 患者基本信息卡片 -->
+  <view class="card patient-header" style="border-left: 12rpx solid var(--level-{{levelNum}});">
+    <view class="patient-level-badge level-{{levelNum}}">{{patient.triageLevel}}</view>
+    <view class="patient-main-info">
+      <text class="patient-name">{{patient.name}}</text>
+      <text class="patient-gender-age">{{patient.gender}} {{patient.age}}岁</text>
+    </view>
+    <view class="patient-times">
+      <text>入科: {{formatTime(patient.inTime)}}</text>
+      <text wx:if="{{patient.outTime}}">出科: {{formatTime(patient.outTime)}}</text>
+      <text wx:else style="color:var(--warning);">留观中</text>
+    </view>
+  </view>
+
+  <!-- 诊断与医生 -->
+  <view class="card">
+    <view class="info-row" wx:if="{{patient.diagnosis}}">
+      <text class="info-label">诊    断</text>
+      <text class="info-value diagnosis-text">{{patient.diagnosis}}</text>
+    </view>
+    <view class="info-row" wx:if="{{patient.doctor}}">
+      <text class="info-label">接诊医生</text>
+      <text class="info-value">{{patient.doctor}}</text>
+    </view>
+    <view class="info-row" wx:if="{{patient.createdByName}}">
+      <text class="info-label">录入人员</text>
+      <text class="info-value">{{patient.createdByName}}</text>
+    </view>
+  </view>
+
+  <!-- 生命体征 -->
+  <view class="card">
+    <view class="section-title"><text>❤️</text> 生命体征</view>
+    <view class="vitals-grid">
+      <view class="vital-item" wx:if="{{patient.vitalSigns && patient.vitalSigns.heartRate}}">
+        <text class="vital-label">心率</text>
+        <text class="vital-value">{{patient.vitalSigns.heartRate}} <text class="vital-unit">次/分</text></text>
+      </view>
+      <view class="vital-item" wx:if="{{patient.vitalSigns && patient.vitalSigns.pulse}}">
+        <text class="vital-label">脉搏</text>
+        <text class="vital-value">{{patient.vitalSigns.pulse}} <text class="vital-unit">次/分</text></text>
+      </view>
+      <view class="vital-item" wx:if="{{patient.vitalSigns && patient.vitalSigns.respRate}}">
+        <text class="vital-label">呼吸</text>
+        <text class="vital-value">{{patient.vitalSigns.respRate}} <text class="vital-unit">次/分</text></text>
+      </view>
+      <view class="vital-item" wx:if="{{patient.vitalSigns && patient.vitalSigns.spo2}}">
+        <text class="vital-label">血氧</text>
+        <text class="vital-value">{{patient.vitalSigns.spo2}} <text class="vital-unit">%</text></text>
+      </view>
+      <view class="vital-item" wx:if="{{patient.vitalSigns && patient.vitalSigns.bpSystolic}}">
+        <text class="vital-label">血压</text>
+        <text class="vital-value">{{patient.vitalSigns.bpSystolic}}/{{patient.vitalSigns.bpDiastolic}} <text class="vital-unit">mmHg</text></text>
+      </view>
+    </view>
+    <view wx:if="{{!patient.vitalSigns || (!patient.vitalSigns.heartRate && !patient.vitalSigns.pulse && !patient.vitalSigns.respRate && !patient.vitalSigns.spo2 && !patient.vitalSigns.bpSystolic)}}" class="empty-hint">
+      未记录生命体征
+    </view>
+  </view>
+
+  <!-- 住院/抢救/手术信息 -->
+  <view class="card">
+    <view class="section-title"><text>🏥</text> 诊疗信息</view>
+    <view class="info-tags">
+      <text class="tag tag-blue" wx:if="{{patient.hospitalized}}">住院 - {{patient.dept || '未知科室'}}</text>
+      <text class="tag tag-orange" wx:if="{{patient.rescued}}">抢救</text>
+      <text class="tag tag-red" wx:if="{{patient.surgery}}">急诊手术</text>
+      <text class="tag tag-green" wx:if="{{patient.severeTrauma}}">严重创伤</text>
+      <text class="tag tag-purple" wx:if="{{patient.ivAccess}}">静脉通道</text>
+      <text class="tag tag-red" wx:if="{{patient.intubated}}">气管插管</text>
+      <text class="tag tag-purple" wx:if="{{patient.centralLine}}">中心静脉</text>
+      <text class="tag tag-orange" wx:if="{{patient.cpr}}">心肺复苏</text>
+      <text class="tag tag-green" wx:if="{{patient.cprSuccess}}">复苏成功</text>
+      <text class="tag tag-gray" wx:if="{{patient.outcome}}">转归: {{patient.outcome}}</text>
+    </view>
+  </view>
+
+  <!-- OCR扫描结果 -->
+  <view wx:if="{{ocrItems.length > 0}}" class="card">
+    <view class="section-title"><text>📄</text> 扫描记录</view>
+    <view wx:for="{{ocrItems}}" wx:for-index="idx" wx:key="scanTime" class="ocr-section-card">
+      <view class="ocr-section-header">
+        <text class="ocr-section-label">扫描{{idx+1}}：{{item.docType === 'medicalOrder' ? '医嘱' : item.docType === 'inspection' ? '检验检查' : item.docType === 'outpatientRecord' ? '门诊病历' : '文档'}}</text>
+        <text class="ocr-section-time">{{formatTime(item.scanTime)}}</text>
+        <text class="ocr-section-edit" data-idx="{{idx}}" bindtap="editOcrItem">编辑</text>
+      </view>
+      <view class="ocr-content">
+        <text decode="{{true}}" space="preserve">{{item.displayText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑按钮 -->
+  <view class="btn-group">
+    <button class="btn btn-primary" bindtap="goEdit">编辑患者信息</button>
+    <button class="btn btn-outline" bindtap="goBack">返回列表</button>
+  </view>
+
+  <view style="height:50rpx;"></view>
+</scroll-view>
