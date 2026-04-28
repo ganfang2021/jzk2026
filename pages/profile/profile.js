@@ -203,9 +203,12 @@ Page({
         } else {
           message = result.message || '云端暂无新数据';
         }
+        // 强制刷新全局患者数据缓存
+        app.globalData.patients = [];
+        app.loadPatients();
         wx.showModal({
           title: '同步完成',
-          content: message,
+          content: message + '\n\n请到患者列表页面查看',
           showCancel: false
         });
       } else {

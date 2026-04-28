@@ -53,7 +53,14 @@ class ImportManager {
       fs.readFile({
         filePath: filePath,
         encoding: 'utf-8',
-        success: (res) => resolve(res.data),
+        success: (res) => {
+          // 移除UTF-8 BOM（如果存在）
+          let content = res.data;
+          if (content.charCodeAt(0) === 0xFEFF) {
+            content = content.substring(1);
+          }
+          resolve(content);
+        },
         fail: reject
       });
     });

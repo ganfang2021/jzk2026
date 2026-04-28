@@ -697,6 +697,12 @@ App({
       // 加载所有用户的云端数据（用于统计和去重）
       var cloudPatients = await cloudStorage.loadPatientsFromCloud(null, true);
       console.log('[syncFromCloud] 云端返回患者数:', cloudPatients ? cloudPatients.length : 0);
+
+      // 详细调试：检查云端返回的数据结构
+      if (cloudPatients && cloudPatients.length > 0) {
+        console.log('[syncFromCloud] 云端数据样本:', JSON.stringify(cloudPatients[0]).substring(0, 200));
+      }
+
       if (!cloudPatients || cloudPatients.length === 0) {
         console.log('[syncFromCloud] 云端暂无患者数据');
         return { success: true, synced: 0, added: 0, updated: 0, message: '云端暂无患者数据' };
@@ -739,26 +745,34 @@ App({
     for (var ui = 0; ui < localUsers.length; ui++) {
       localUserIds[localUsers[ui].id] = localUsers[ui].id;
       localUsernames[localUsers[ui].username] = localUsers[ui].id;
+      console.log('[mergeCloudToLocal] 本地用户:', localUsers[ui].username, '| ID:', localUsers[ui].id);
     }
 
     // 获取当前登录用户
     var currentUser = this.getCurrentUser();
     var isAdmin = currentUser && currentUser.role === 'admin';
-    console.log('[mergeCloudToLocal] 当前登录用户:', currentUser ? currentUser.userId : 'null', '| isAdmin:', isAdmin);
+    console.log('[mergeCloudToLocal] 当前登录用户:', currentUser ? currentUser.username : 'null', '| ID:', currentUser ? currentUser.userId : 'null', '| isAdmin:', isAdmin);
 
     // 第二步：按 userId 分组（每个患者只归属其 createdBy 对应的用户）
     var groups = {};
+    var unmatchedCount = 0;
     for (var gid in globalCloudMap) {
       var patient = globalCloudMap[gid].patient;
       var uid = patient.createdBy || patient.userId;
+      var pid = patient.id || patient._id;
+
       if (!uid) {
-        console.log('[mergeCloudToLocal] 跳过无归属信息的数据:', gid);
+        console.log('[mergeCloudToLocal] 跳过无归属信息的数据:', pid);
+        unmatchedCount++;
         continue;
       }
+
+      console.log('[mergeCloudToLocal] 处理患者:', pid, '| createdBy:', uid, '| userId:', patient.userId);
 
       // 如果 uid 不是本地有效用户，尝试匹配
       if (!localUserIds[uid]) {
         var matched = false;
+        console.log('[mergeCloudToLocal] uid不在本地用户中，尝试匹配...');
         for (var mi = 0; mi < localUsers.length; mi++) {
           if (localUsers[mi].username === uid ||
               localUsers[mi].nickname === uid ||
@@ -766,18 +780,21 @@ App({
             uid = localUsers[mi].id;
             patient.createdBy = uid;
             matched = true;
+            console.log('[mergeCloudToLocal] 匹配成功，转换为本地ID:', uid);
             break;
           }
         }
         if (!matched) {
-          // 无法匹配，admin用户跳过该数据，普通用户使用当前用户ID
+          // 无法匹配，admin用户也将数据归属到当前用户，保持数据可见
           if (!isAdmin) {
             uid = currentUser.userId;
             patient.createdBy = currentUser.userId;
             console.log('[mergeCloudToLocal] 非admin用户，使用当前用户ID作为归属:', currentUser.userId);
           } else {
-            console.log('[mergeCloudToLocal] admin跳过无法匹配的数据:', gid, '| uid:', uid);
-            continue;
+            // admin用户也归属到当前管理员，确保数据不丢失
+            uid = currentUser.userId;
+            patient.createdBy = currentUser.userId;
+            console.log('[mergeCloudToLocal] admin无法匹配，归属于当前用户:', currentUser.userId);
           }
         }
       }
@@ -785,7 +802,7 @@ App({
       if (!groups[uid]) groups[uid] = [];
       groups[uid].push(patient);
     }
-    console.log('[mergeCloudToLocal] 分组数:', Object.keys(groups).length, '| 组:', Object.keys(groups));
+    console.log('[mergeCloudToLocal] 分组数:', Object.keys(groups).length, '| 组:', Object.keys(groups), '| 未匹配:', unmatchedCount);
 
     // 第三步：逐用户合并到本地
     for (var uid in groups) {

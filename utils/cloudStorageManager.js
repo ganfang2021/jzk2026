@@ -12,12 +12,27 @@ class CloudStorageManager {
   // 初始化云数据库
   init() {
     if (wx.cloud) {
-      this.db = wx.cloud.database();
-      console.log('云存储管理器初始化成功');
-      return true;
+      try {
+        this.db = wx.cloud.database();
+        console.log('云存储管理器初始化成功');
+        return true;
+      } catch (e) {
+        console.error('云数据库初始化失败:', e);
+        return false;
+      }
     }
     console.warn('云开发未初始化');
     return false;
+  }
+
+  // 确保数据库已初始化
+  _ensureDb() {
+    if (!this.db) {
+      this.init();
+    }
+    if (!this.db) {
+      throw new Error('云数据库未初始化');
+    }
   }
 
   // 生成患者数据的同步哈希（用于判断数据是否变更）
@@ -128,43 +143,64 @@ class CloudStorageManager {
     }
   }
 
-  // 从云端加载患者数据
+  // 从云端加载患者数据（支持分页获取所有数据）
   async loadPatientsFromCloud(userId, isAdmin = false) {
-    if (!this.db) {
-      console.warn('云数据库未初始化');
-      return [];
-    }
+    this._ensureDb();
 
     try {
-      let result;
-      if (isAdmin) {
-        // 管理员加载所有数据
-        result = await this.db.collection(this.collectionName)
-          .where({
-            deleted: this.db.command.neq(true)
-          })
-          .orderBy('createdAt', 'desc')
-          .limit(1000)
-          .get();
-      } else {
-        // 普通用户加载自己的数据
-        result = await this.db.collection(this.collectionName)
-          .where({
-            userId: userId,
-            deleted: this.db.command.neq(true)
-          })
-          .orderBy('createdAt', 'desc')
-          .limit(1000)
-          .get();
+      let allData = [];
+      const pageSize = 100; // 每次最多获取100条
+      let skip = 0;
+      let hasMore = true;
+
+      console.log('[loadPatientsFromCloud] 开始分页获取云端数据...');
+
+      while (hasMore) {
+        let result;
+        if (isAdmin) {
+          // 管理员加载所有数据
+          result = await this.db.collection(this.collectionName)
+            .where({
+              deleted: this.db.command.neq(true)
+            })
+            .orderBy('updatedAt', 'desc')
+            .skip(skip)
+            .limit(pageSize)
+            .get();
+        } else {
+          // 普通用户加载自己的数据
+          result = await this.db.collection(this.collectionName)
+            .where({
+              userId: userId,
+              deleted: this.db.command.neq(true)
+            })
+            .orderBy('updatedAt', 'desc')
+            .skip(skip)
+            .limit(pageSize)
+            .get();
+        }
+
+        if (result.data && result.data.length > 0) {
+          allData = allData.concat(result.data);
+          skip += result.data.length;
+          console.log('[loadPatientsFromCloud] 已获取:', allData.length, '条');
+
+          // 如果返回的数量少于pageSize，说明已经获取完毕
+          if (result.data.length < pageSize) {
+            hasMore = false;
+          }
+        } else {
+          hasMore = false;
+        }
       }
 
-      console.log('从云端加载患者数据:', result.data.length, '条');
+      console.log('[loadPatientsFromCloud] 云端加载完成，总计:', allData.length, '条');
 
       // 云端数据去重：按 _id 保留最新版本
       var seen = {};
       var deduped = [];
-      for (var i = 0; i < result.data.length; i++) {
-        var p = result.data[i];
+      for (var i = 0; i < allData.length; i++) {
+        var p = allData[i];
         var pid = p._id;
         if (!pid) continue;
         var pTime = new Date(p.updatedAt || p.createdAt || 0).getTime();
@@ -181,8 +217,8 @@ class CloudStorageManager {
         delete patient._updateDate;
         deduped.push(patient);
       }
-      if (deduped.length < result.data.length) {
-        console.log('云端去重完成:', result.data.length, '->', deduped.length);
+      if (deduped.length < allData.length) {
+        console.log('云端去重完成:', allData.length, '->', deduped.length);
       }
       return deduped;
     } catch (e) {

@@ -34,7 +34,7 @@ class ExportManager {
     const fs = wx.getFileSystemManager();
 
     try {
-      fs.writeFileSync(filePath, csv, 'utf-8');
+      fs.writeFileSync(filePath, csv, 'utf8');
       console.log('导出成功:', filePath);
       return filePath;
     } catch (e) {
@@ -199,7 +199,7 @@ class ExportManager {
     const fs = wx.getFileSystemManager();
 
     try {
-      fs.writeFileSync(filePath, csv, 'utf-8');
+      fs.writeFileSync(filePath, csv, 'utf8');
       return filePath;
     } catch (e) {
       console.error('导出统计失败:', e);

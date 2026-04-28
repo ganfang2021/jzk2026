@@ -321,30 +321,24 @@ Page({
         toast.showError('没有数据可导出');
         return;
       }
-      
+
       const exportManager = new ExportManager();
-      const filePath = await exportManager.exportToCSV(patients, '患者数据');
-      
+      const tempFilePath = await exportManager.exportToCSV(patients, '患者数据');
+
       toast.hideLoading();
 
-      var fileName = filePath.split('/').pop();
+      // 使用 openDocument 打开文件（微信会自动处理文件）
       wx.openDocument({
-        filePath: filePath,
+        filePath: tempFilePath,
         fileType: 'csv',
         success: function() {
           console.log('打开文档成功');
         },
         fail: function(err) {
           console.error('打开文档失败:', err);
-          wx.showModal({
-            title: '导出成功',
-            content: '文件已保存，请在手机文件管理中查看',
-            showCancel: false
-          });
+          wx.showToast({ title: '打开失败: ' + (err.errMsg || ''), icon: 'none', duration: 2000 });
         }
       });
-
-      toast.showSuccess('导出成功');
     } catch (e) {
       toast.hideLoading();
       console.error('导出失败:', e);
@@ -358,32 +352,26 @@ Page({
       toast.showLoading('正在导出...');
 
       const exportManager = new ExportManager();
-      const filePath = await exportManager.exportStats(this.data.stats, '统计数据');
+      const tempFilePath = await exportManager.exportStats(this.data.stats, '统计数据');
 
       toast.hideLoading();
-      
-      // 使用openDocument打开文件
+
+      // 使用 openDocument 打开文件
       wx.openDocument({
-        filePath: filePath,
+        filePath: tempFilePath,
         fileType: 'csv',
-        success: () => {
+        success: function() {
           console.log('打开文档成功');
         },
-        fail: (err) => {
+        fail: function(err) {
           console.error('打开文档失败:', err);
-          wx.showModal({
-            title: '导出成功',
-            content: '文件已保存，请在手机文件管理中查看',
-            showCancel: false
-          });
+          wx.showToast({ title: '打开失败: ' + (err.errMsg || ''), icon: 'none', duration: 2000 });
         }
       });
-      
-      toast.showSuccess('导出成功');
     } catch (e) {
       toast.hideLoading();
       console.error('导出失败:', e);
-      toast.showError('导出失败');
+      toast.showError('导出失败: ' + e.message);
     }
   },
 
